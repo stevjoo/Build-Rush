@@ -18,16 +18,25 @@ public class BuilderController : MonoBehaviour
     private float moveSinceDirChange = 0f;
     public float minDistanceAfterDirChange = 1f; // minimal jarak sebelum bisa menaruh block
 
+
+    // Untuk handle jumping (cek grounded)
+    private CharacterController charController;
+    private bool wasGroundedLastFrame = true;
+
+
     // Untuk menghitung perpindahan aktual pemain
     private Vector3 lastPlayerPosition;
     // threshold kecil untuk mengabaikan jitter
-    private const float kMoveEpsilon = 0.001f;
+    private const float kMoveEpsilon = 0.005f;
 
     void Start()
     {
         moveController = GetComponent<MovementController>();
         if (moveController == null)
             Debug.LogError("MovementController not found on this GameObject!");
+
+
+        charController = GetComponent<CharacterController>();
 
         lastPlacedPos = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
         lastMoveDir = Vector3Int.zero;
@@ -40,12 +49,33 @@ public class BuilderController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
             placingActive = !placingActive;
 
-        if (!placingActive || moveController == null)
+        if (!placingActive || moveController == null || charController == null)
         {
             // update lastPlayerPosition anyway to avoid spike when re-enabled
             lastPlayerPosition = transform.position;
             return;
         }
+
+
+        // --- Cek status grounded ---
+        bool isGrounded = charController.isGrounded;
+
+        // Jika baru mendarat dari udara, maka reset jarak
+        if (!wasGroundedLastFrame && isGrounded)
+        {
+            moveSinceDirChange = 0f;
+            lastPlayerPosition = transform.position;
+        }
+
+        wasGroundedLastFrame = isGrounded;
+
+        // Kalau sedang di udara, skip placing block
+        if (!isGrounded)
+        {
+            lastPlayerPosition = transform.position;
+            return;
+        }
+
 
         // Gunakan snapped movement grid (4 arah)
         Vector3Int moveDir = moveController.moveDirectionGrid;
