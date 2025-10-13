@@ -9,6 +9,23 @@ public class BlockType
     //public Color color = Color.white; // Warna blok, opsional
 }
 
+
+// Struktur data untuk menyimpan informasi blok dalam level
+[System.Serializable]
+public class BlockData
+{
+    public Vector3Int position;
+    public int blockIndex;
+}
+
+// Struktur data untuk menyimpan seluruh level
+[System.Serializable]
+public class LevelData
+{
+    public List<BlockData> blocks = new List<BlockData>();
+}
+
+
 public class GridManager : MonoBehaviour
 {
 
@@ -87,4 +104,46 @@ public class GridManager : MonoBehaviour
 
         return blockIndices[gridPos]; // Mengembalikan index tipe blok
     }
+
+
+
+    // Save
+    public void SaveLevel(string fileName)
+    {
+        LevelData level = new LevelData();
+        foreach (var kvp in placedBlocks)
+        {
+            level.blocks.Add(new BlockData { position = kvp.Key, blockIndex = blockIndices[kvp.Key] });
+        }
+
+        string json = JsonUtility.ToJson(level, true);
+        System.IO.File.WriteAllText(Application.dataPath + "/" + fileName + ".json", json);
+        Debug.Log("Level saved!");
+    }
+
+    // Load
+    public void LoadLevel(string fileName)
+    {
+        string path = Application.dataPath + "/" + fileName + ".json";
+        if (!System.IO.File.Exists(path)) return;
+
+        string json = System.IO.File.ReadAllText(path);
+        LevelData level = JsonUtility.FromJson<LevelData>(json);
+
+        // Bersihkan block lama
+        foreach (var kvp in placedBlocks.Values)
+            Destroy(kvp);
+        placedBlocks.Clear();
+        blockIndices.Clear();
+
+        // Spawn block baru
+        foreach (var b in level.blocks)
+        {
+            selectedIndex = b.blockIndex;
+            PlaceBlock(b.position);
+        }
+        Debug.Log("Level loaded!");
+    }
+
+
 }
