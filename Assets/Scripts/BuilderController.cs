@@ -60,6 +60,23 @@ public class BuilderController : MonoBehaviour
 
     void Update()
     {
+
+        // --- SWITCH BLOCK berdasarkan number key 1..0 ---
+        for (int i = 0; i < 10; i++)
+        {
+            KeyCode key = KeyCode.Alpha0 + i;
+            if (Input.GetKeyDown(key))
+            {
+                int index = (i == 0) ? 9 : i - 1; // Alpha0 = block ke-10 (index 9)
+                if (index < gridManager.blockTypes.Length)
+                {
+                    gridManager.selectedIndex = index;
+                    Debug.Log("Selected block: " + gridManager.blockTypes[index].name);
+                }
+            }
+        }
+
+
         // --- toggle mode (E untuk place, Q untuk break, ` atau tekan ulang mode saat ini untuk reset None) ---
         if (Input.GetKeyDown(KeyCode.E))
         {
