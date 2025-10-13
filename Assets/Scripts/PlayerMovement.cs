@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
         // Ini penting agar gravitasi tidak terus menumpuk.
         if (characterController.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; 
+            velocity.y = -2f;
         }
 
         // --- MODIFIKASI: Logika untuk Gerakan 4 Arah ---
@@ -48,13 +48,13 @@ public class PlayerMovement : MonoBehaviour
 
         // Arah gerakan relatif terhadap kamera (logika ini tetap sama)
         Vector3 moveDirection = cameraTransform.right * x + cameraTransform.forward * z;
-        moveDirection.y = 0; 
+        moveDirection.y = 0;
 
         // Terapkan gerakan
         characterController.Move(moveDirection.normalized * speed * Time.deltaTime);
-        
+
         // Putar karakter agar menghadap ke arah ia bergerak (logika ini tetap sama)
-        if(moveDirection.magnitude >= 0.1f)
+        if (moveDirection.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
