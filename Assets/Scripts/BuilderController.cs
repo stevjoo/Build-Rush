@@ -283,6 +283,28 @@ public class BuilderController : MonoBehaviour
 
     }
 
+
+    public void TogglePlaceMode()
+    {
+        if (currentMode == BuildMode.Place)
+            currentMode = BuildMode.None;
+        else
+            currentMode = BuildMode.Place;
+
+        Debug.Log("Builder mode switched to: " + currentMode);
+    }
+
+    public void ToggleBreakMode()
+    {
+        if (currentMode == BuildMode.Break)
+            currentMode = BuildMode.None;
+        else
+            currentMode = BuildMode.Break;
+
+        Debug.Log("Builder mode switched to: " + currentMode);
+    }
+
+
     private void TryPlaceVerticalBelow()
     {
         float currentY = transform.position.y;
