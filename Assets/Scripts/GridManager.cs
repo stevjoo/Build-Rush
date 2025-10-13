@@ -58,7 +58,12 @@ public class GridManager : MonoBehaviour
     {
         // Cek apakah posisi ada blocknya
         if (!placedBlocks.ContainsKey(gridPos))
+        {
+
+            Debug.Log("No block found at: " + gridPos);
             return false;
+        }
+           
 
         // Hapus block dari scene dan dictionary
         Destroy(placedBlocks[gridPos]);

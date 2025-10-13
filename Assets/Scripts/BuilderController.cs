@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BuilderController : MonoBehaviour
@@ -5,24 +6,42 @@ public class BuilderController : MonoBehaviour
     [Header("References")]
     public GridManager gridManager;
 
-    [Header("Settings")]
-    public bool placingActive = true;
-    public float behindOffset = 1.3f;
-    public float minDistanceAfterDirChange = 1f;
-    public float verticalPlaceOffset = 1.2f; // posisi block di bawah player
+    [Header("Block Placing Settings")]
+    public bool placingActive = false; // toggle untuk aktifkan mode place
+    public float behindOffset = 1.3f; // jarak minimal placement di belakang player
+    public float minDistanceAfterDirChange = 1f; // jarak minimal placement setelah arah player berubah
+    public float verticalPlaceOffset = 1.2f; // offset vertikal saat place di udara
     public float minVerticalJumpHeight = 0.8f; // tinggi minimal sebelum boleh place di udara
 
-    private Vector3Int lastPlacedPos;
-    private MovementController moveController;
-    private CharacterController charController;
 
-    private Vector3Int lastMoveDir;
-    private float moveSinceDirChange = 0f;
-    private Vector3 lastPlayerPosition;
-    private const float kMoveEpsilon = 0.005f;
+    [Header("Block Breaking Settings")]
+    public float breakCooldown = 1f; // jeda antar break 
+    public float frontBreakDistance = 1f; // jarak deteksi block di depan
 
-    private bool wasGroundedLastFrame = true;
-    private float jumpStartY = 0f;
+
+    // --- VARIABEL INTERNAL ---
+    private Vector3Int lastPlacedPos; // Simpan posisi terakhir kali block di-place
+    private MovementController moveController; // referensi ke MovementController player
+    private CharacterController charController; // referensi ke CharacterController player
+
+    private float breakCooldownTimer = 0f; // timer cooldown break
+    private Vector3Int lastBrokenPos = new Vector3Int(int.MinValue, int.MinValue, int.MinValue); // posisi terakhir break
+
+    private Vector3Int lastMoveDir; // arah gerak terakhir
+    private float moveSinceDirChange = 0f; // jarak tempuh sejak arah berubah
+    private Vector3 lastPlayerPosition; // posisi player terakhir frame sebelumnya
+    private const float kMoveEpsilon = 0.005f; // threshold untuk deteksi gerakan
+
+    private bool wasGroundedLastFrame = true; // untuk deteksi transisi grounded -> air atau sebaliknya
+    private float jumpStartY = 0f; // catat posisi Y saat mulai lompat
+
+
+
+    // --- Build Mode ---
+    private enum BuildMode { None, Place, Break } // mode build yang bisa dipilih
+    private BuildMode currentMode = BuildMode.None; // mode build saat ini
+    
+
 
     void Start()
     {
@@ -41,89 +60,210 @@ public class BuilderController : MonoBehaviour
 
     void Update()
     {
+        // --- toggle mode (E untuk place, Q untuk break, ` atau tekan ulang mode saat ini untuk reset None) ---
         if (Input.GetKeyDown(KeyCode.E))
-            placingActive = !placingActive;
+        {
+            if (currentMode == BuildMode.Place)
+            {
+                currentMode = BuildMode.None;
+            }
+            else
+            {
+                currentMode = BuildMode.Place;
+            }
 
-        if (!placingActive || moveController == null || charController == null)
+            Debug.Log("Builder mode switched to: " + currentMode);
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (currentMode == BuildMode.Break)
+            {
+                currentMode = BuildMode.None;
+            }
+            else
+            {
+                currentMode = BuildMode.Break;
+            }
+
+            Debug.Log("Builder mode switched to: " + currentMode);
+        }
+        else if (Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            currentMode = BuildMode.None;
+            Debug.Log("Builder mode switched to: " + currentMode);
+        }
+
+
+        // --- update cooldown timer ---
+        if (breakCooldownTimer > 0f)
+            breakCooldownTimer -= Time.deltaTime;
+
+
+        // --- Handle kalau navController atau charController kosong ---
+        if (moveController == null || charController == null)
         {
             lastPlayerPosition = transform.position;
             return;
         }
 
-        bool isGrounded = charController.isGrounded;
+
+
+        // --- --- --- --- --- ---
+        // MODE: NONE
+        // --- --- --- --- --- ---
+        if (currentMode == BuildMode.None)
+        {
+            lastPlayerPosition = transform.position;
+            return;
+        }
+
 
         // --- TRANSISI: baru mendarat dari lompat ---
-        if (!wasGroundedLastFrame && isGrounded)
+        bool isGrounded = charController.isGrounded; // cek kondisi grounded sekarang
+        if (!wasGroundedLastFrame && isGrounded) // transisi dari udara ke tanah
         {
-            moveSinceDirChange = 0f;
-            lastPlayerPosition = transform.position;
-            jumpStartY = 0f;
+            moveSinceDirChange = 0f; // reset jarak tempuh
+            lastPlayerPosition = transform.position; // update posisi terakhir
+            jumpStartY = 0f; // reset catatan lompat // TODO: nanti ubah ini
         }
 
         // --- TRANSISI: baru mulai lompat ---
-        if (wasGroundedLastFrame && !isGrounded)
+        else if (wasGroundedLastFrame && !isGrounded)
         {
             jumpStartY = transform.position.y;
         }
 
         wasGroundedLastFrame = isGrounded;
 
-        if (!isGrounded)
+        // --- --- --- --- --- ---
+        // MODE: PLACE
+        // --- --- --- --- --- ---
+        if (currentMode == BuildMode.Place)
         {
-            TryPlaceVerticalBelow();
-            return;
-        }
-
-        // ---------- Mode normal (grounded) ----------
-        Vector3Int moveDir = moveController.moveDirectionGrid;
-        if (moveDir == Vector3Int.zero)
-        {
-            lastPlayerPosition = transform.position;
-            return;
-        }
-
-        if (moveDir != lastMoveDir)
-        {
-            moveSinceDirChange = 0f;
-            lastMoveDir = moveDir;
-            lastPlayerPosition = transform.position;
-        }
-
-        Vector3 currentPlayerPos = transform.position;
-        Vector3 lastPosXZ = new Vector3(lastPlayerPosition.x, 0f, lastPlayerPosition.z);
-        Vector3 currPosXZ = new Vector3(currentPlayerPos.x, 0f, currentPlayerPos.z);
-        float actualMoved = Vector3.Distance(currPosXZ, lastPosXZ);
-
-        if (actualMoved > kMoveEpsilon)
-            moveSinceDirChange += actualMoved;
-
-        lastPlayerPosition = currentPlayerPos;
-
-        Vector3 offset = Vector3.zero;
-        if (Mathf.Abs(moveDir.x) > 0)
-            offset = new Vector3(-moveDir.x * behindOffset, 0f, 0f);
-        else if (Mathf.Abs(moveDir.z) > 0)
-            offset = new Vector3(0f, 0f, -moveDir.z * behindOffset);
-
-        Vector3 blockWorldPos = transform.position + offset;
-        Vector3Int blockGridPos = new Vector3Int(
-            Mathf.FloorToInt(blockWorldPos.x + 0.5f),
-            Mathf.FloorToInt(blockWorldPos.y),
-            Mathf.FloorToInt(blockWorldPos.z + 0.5f)
-        );
-
-        if (moveSinceDirChange >= minDistanceAfterDirChange &&
-            blockGridPos != lastPlacedPos &&
-            !gridManager.HasBlock(blockGridPos))
-        {
-            if (gridManager.PlaceBlock(blockGridPos))
+            if (!isGrounded)
             {
-                lastPlacedPos = blockGridPos;
-                moveSinceDirChange = 0f;
+                TryPlaceVerticalBelow();
+                return;
+            }
+
+            Vector3Int moveDir = moveController.moveDirectionGrid;
+            if (moveDir == Vector3Int.zero)
+            {
                 lastPlayerPosition = transform.position;
-                Debug.Log("Placed (ground) at: " + blockGridPos);
+                return;
+            }
+
+            if (moveDir != lastMoveDir)
+            {
+                moveSinceDirChange = 0f;
+                lastMoveDir = moveDir;
+                lastPlayerPosition = transform.position;
+            }
+
+            Vector3 currentPlayerPos = transform.position;
+            Vector3 lastPosXZ = new Vector3(lastPlayerPosition.x, 0f, lastPlayerPosition.z);
+            Vector3 currPosXZ = new Vector3(currentPlayerPos.x, 0f, currentPlayerPos.z);
+            float actualMoved = Vector3.Distance(currPosXZ, lastPosXZ);
+
+            if (actualMoved > kMoveEpsilon)
+                moveSinceDirChange += actualMoved;
+
+            lastPlayerPosition = currentPlayerPos;
+
+            Vector3 offset = Vector3.zero;
+            if (Mathf.Abs(moveDir.x) > 0)
+                offset = new Vector3(-moveDir.x * behindOffset, 0f, 0f);
+            else if (Mathf.Abs(moveDir.z) > 0)
+                offset = new Vector3(0f, 0f, -moveDir.z * behindOffset);
+
+            Vector3 blockWorldPos = transform.position + offset;
+            Vector3Int blockGridPos = new Vector3Int(
+                Mathf.FloorToInt(blockWorldPos.x + 0.5f),
+                Mathf.FloorToInt(blockWorldPos.y),
+                Mathf.FloorToInt(blockWorldPos.z + 0.5f)
+            );
+
+            if (moveSinceDirChange >= minDistanceAfterDirChange &&
+                blockGridPos != lastPlacedPos &&
+                !gridManager.HasBlock(blockGridPos))
+            {
+                if (gridManager.PlaceBlock(blockGridPos))
+                {
+                    lastPlacedPos = blockGridPos;
+                    moveSinceDirChange = 0f;
+                    lastPlayerPosition = transform.position;
+                    Debug.Log("Placed (ground) at: " + blockGridPos);
+                }
+            }
+
+            return;
+        }
+
+        // --- --- --- --- --- ---
+        // MODE: BREAK
+        // --- --- --- --- --- ---
+        if (currentMode == BuildMode.Break)
+        {
+            Vector3Int moveDir = moveController.moveDirectionGrid;
+
+            // --- Break block di depan player ---
+            if (moveDir != Vector3Int.zero)
+            {
+                Vector3 origin = transform.position + Vector3.up * 0.15f; // sedikit di tengah tubuh
+                Vector3 direction = new Vector3(moveDir.x, 0, moveDir.z);
+                Ray ray = new Ray(origin, direction);
+
+                // cek debug ray
+                float distance = 5f;
+                Debug.DrawRay(origin, direction * distance, Color.red);
+
+                if (Physics.Raycast(ray, out RaycastHit hit, frontBreakDistance))
+                {
+                    Debug.Log("Ray hit point: " + hit.point + " at direction " + direction);
+                    Vector3 hitPos = hit.point - direction * 0.1f;
+                    Debug.Log("Ray hit: " + hit.collider.name + " at position " + hitPos);
+                    Vector3Int gridPos = new Vector3Int(
+                        Mathf.RoundToInt(hit.collider.transform.position.x),
+                        Mathf.RoundToInt(hit.collider.transform.position.y),
+                        Mathf.RoundToInt(hit.collider.transform.position.z)
+
+                    );
+                    Debug.Log("Ray hit: " + hit.collider.name + " at position " + gridPos);
+
+                    if (breakCooldownTimer <= 0f && gridPos != lastBrokenPos && gridManager.HasBlock(gridPos))
+                    {
+                        gridManager.RemoveBlock(gridPos);
+                        lastBrokenPos = gridPos;
+                        breakCooldownTimer = 0.2f; // cooldown kecil untuk depan
+                        Debug.Log("Broke (front) at: " + gridPos);
+                    }
+                }
+            }
+
+            // --- Break block di bawah (Ctrl + S) ---
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S))
+            {
+                if (breakCooldownTimer <= 0f && isGrounded)
+                {
+                    Vector3 belowPos = transform.position + Vector3.down * verticalPlaceOffset;
+                    Vector3Int gridPos = new Vector3Int(
+                        Mathf.FloorToInt(belowPos.x + 0.5f),
+                        Mathf.FloorToInt(belowPos.y),
+                        Mathf.FloorToInt(belowPos.z + 0.5f)
+                    );
+
+                    if (gridManager.HasBlock(gridPos))
+                    {
+                        gridManager.RemoveBlock(gridPos);
+                        breakCooldownTimer = breakCooldown; // cooldown lebih panjang
+                        Debug.Log("Broke (below) at: " + gridPos);
+                    }
+                }
             }
         }
+
+
     }
 
     private void TryPlaceVerticalBelow()
