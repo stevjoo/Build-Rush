@@ -6,7 +6,7 @@ public class LevelController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F5))
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             gridManager.SaveLevel("MyLevel");
             Debug.Log("Level saved!");
