@@ -41,7 +41,8 @@ public class MainMenuController : MonoBehaviour
         LevelSelectionData levelData = levelListContainer.GetLevelByID(selectedLevelID);
         if (levelData != null)
         {
-            SceneManager.LoadScene(levelData.sceneName);
+            //sementara ku masukin ke builder scene dulu
+            SceneManager.LoadScene("BuilderScene");
         }
         else
         {
