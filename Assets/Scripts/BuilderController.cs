@@ -38,7 +38,7 @@ public class BuilderController : MonoBehaviour
 
 
     // --- Build Mode ---
-    private enum BuildMode { None, Place, Break } // mode build yang bisa dipilih
+    private enum BuildMode { None, Place, Break, PlaceAbove } // mode build yang bisa dipilih
     private BuildMode currentMode = BuildMode.None; // mode build saat ini
     
 
@@ -105,6 +105,19 @@ public class BuilderController : MonoBehaviour
 
             Debug.Log("Builder mode switched to: " + currentMode);
         }
+
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (currentMode == BuildMode.PlaceAbove)
+            {
+                currentMode = BuildMode.None;
+            }
+            else
+            {
+                currentMode = BuildMode.PlaceAbove;
+            }
+        }
+
         else if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             currentMode = BuildMode.None;
@@ -281,27 +294,38 @@ public class BuilderController : MonoBehaviour
         }
 
 
+        // --- Place Above Player
+        if (currentMode == BuildMode.PlaceAbove)
+        {
+            TryPlaceAbovePlayer();
+        }
+
+
     }
 
-
-    public void TogglePlaceMode()
+    private void TryPlaceAbovePlayer()
     {
-        if (currentMode == BuildMode.Place)
-            currentMode = BuildMode.None;
-        else
-            currentMode = BuildMode.Place;
+        // Posisi di atas player
+        Vector3 abovePos = transform.position + Vector3.up * 2f; // verticalPlaceOffset bisa pakai 1.5f
 
-        Debug.Log("Builder mode switched to: " + currentMode);
-    }
+        Vector3Int blockGridPos = new Vector3Int(
+            Mathf.FloorToInt(abovePos.x + 0.5f),
+            Mathf.FloorToInt(abovePos.y),
+            Mathf.FloorToInt(abovePos.z + 0.5f)
+        );
 
-    public void ToggleBreakMode()
-    {
-        if (currentMode == BuildMode.Break)
-            currentMode = BuildMode.None;
-        else
-            currentMode = BuildMode.Break;
+        // Jangan place di posisi yang sama dengan block terakhir
+        if (blockGridPos == lastPlacedPos)
+            return;
 
-        Debug.Log("Builder mode switched to: " + currentMode);
+        if (!gridManager.HasBlock(blockGridPos))
+        {
+            if (gridManager.PlaceBlock(blockGridPos))
+            {
+                lastPlacedPos = blockGridPos;
+                Debug.Log("Placed block above player at: " + blockGridPos);
+            }
+        }
     }
 
 
