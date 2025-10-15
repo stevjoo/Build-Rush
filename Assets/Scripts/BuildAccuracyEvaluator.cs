@@ -6,7 +6,6 @@ using UnityEngine;
 public class BuildAccuracyEvaluator : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
-    [SerializeField] private string targetFile = "target_level"; // tanpa .json
     [SerializeField] private bool autoUpdate = true; // realtime evaluasi
     [SerializeField] private float updateInterval = 1f; // update interval kalau autoUpdate nyala
 
@@ -14,32 +13,15 @@ public class BuildAccuracyEvaluator : MonoBehaviour
     private float timer = 0f; // timer untuk trigger update
     private float lastAccuracy = 0f; // simpan hasil evaluasi terakhir
 
-    void Start()
-    {
-        // Load data target saat mulai
-        LoadTargetLevel(targetFile);
-    }
 
-    void Update()
-    {
+    // Penanda kalau start game
+    private bool isStarted = false;
 
-        // matikan kalau tidak perlu
-        if (!autoUpdate || targetData == null || gridManager == null)
-            return;
 
-        // tiap frame cek timer, kalau sudah lewat interval, hitung ulang akurasi
-        timer += Time.deltaTime;
-        if (timer >= updateInterval)
-        {
-            timer = 0f; // reset timer
-            lastAccuracy = CalculateBestMatchAccuracy(); // hitung akurasi terbaik
-            Debug.Log($"Realtime Accuracy: {lastAccuracy:0.0}%"); // cek hasil di console
-        }
-    }
 
 
     // Load target level dari file JSON
-    public void LoadTargetLevel(string fileName)
+    public void LoadLevel(string fileName)
     {
         string path = Path.Combine(Application.dataPath, fileName + ".json");
         if (!File.Exists(path))
@@ -52,6 +34,30 @@ public class BuildAccuracyEvaluator : MonoBehaviour
         targetData = JsonUtility.FromJson<LevelData>(json);
         Debug.Log($"Loaded target level: {fileName} with {targetData.blocks.Count} blocks");
     }
+
+
+    // Toggle start
+    public void SetGameState(bool state) => isStarted = state;
+
+
+    // Update tiap frame kalau start
+    void Update()
+    {
+
+        // matikan kalau tidak perlu
+        if (!autoUpdate || targetData == null || gridManager == null || isStarted == false)
+            return;
+
+        // tiap frame cek timer, kalau sudah lewat interval, hitung ulang akurasi
+        timer += Time.deltaTime;
+        if (timer >= updateInterval)
+        {
+            timer = 0f; // reset timer
+            lastAccuracy = CalculateBestMatchAccuracy(); // hitung akurasi terbaik
+            Debug.Log($"Realtime Accuracy: {lastAccuracy:0.0}%"); // cek hasil di console
+        }
+    }
+
 
 
     // Cek akurasi bangunan pemain terhadap target
@@ -126,7 +132,7 @@ public class BuildAccuracyEvaluator : MonoBehaviour
         };
     }
 
-    // --- Opsional: manual panggil dari UI ---
+    // --- manual panggil dari UI ---
     public void EvaluateNow()
     {
         float acc = CalculateBestMatchAccuracy();

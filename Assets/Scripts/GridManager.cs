@@ -124,6 +124,13 @@ public class GridManager : MonoBehaviour
         return _blockIndices[gridPos]; // Mengembalikan index tipe blok
     }
 
+    // Hapus seluruh data block saat ini
+    public void ClearInternalDictionaries()
+    {
+        _placedBlocks.Clear();
+        _blockIndices.Clear();
+    }
+
 
 
     // Save
