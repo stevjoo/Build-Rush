@@ -116,6 +116,7 @@ public class BuilderController : MonoBehaviour
             {
                 currentMode = BuildMode.PlaceAbove;
             }
+            Debug.Log("Builder mode switched to: " + currentMode);
         }
 
         else if (Input.GetKeyDown(KeyCode.BackQuote))
