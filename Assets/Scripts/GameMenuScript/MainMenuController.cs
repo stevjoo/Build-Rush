@@ -41,7 +41,7 @@ public class MainMenuController : MonoBehaviour
         LevelSelectionData levelData = levelListContainer.GetLevelByID(selectedLevelID);
         if (levelData != null)
         {
-            //sementara ku masukin ke builder scene dulu
+            //sementara ku masukin ke builder scene duluwh
             SceneManager.LoadScene("BuilderScene");
         }
         else
@@ -50,9 +50,5 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 }

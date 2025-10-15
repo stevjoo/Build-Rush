@@ -37,4 +37,14 @@ public class MenuManager : MonoBehaviour
             AudioListener.volume = 0f;
         }
     }
+
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+            Debug.Log("Quit Game");
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
 }
