@@ -1,21 +1,21 @@
-using UnityEngine;
+//using UnityEngine;
 
-public class LevelController : MonoBehaviour
-{
-    public GridManager gridManager;
+//public class LevelController : MonoBehaviour
+//{
+//    public GridManager gridManager;
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            gridManager.SaveLevel("MyLevel");
-            Debug.Log("Level saved!");
-        }
+//    void Update()
+//    {
+//        if (Input.GetKeyDown(KeyCode.Alpha0))
+//        {
+//            gridManager.SaveLevel("MyLevel");
+//            Debug.Log("Level saved!");
+//        }
 
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            gridManager.LoadLevel("MyLevel");
-            Debug.Log("Level loaded!");
-        }
-    }
-}
+//        if (Input.GetKeyDown(KeyCode.F9))
+//        {
+//            gridManager.LoadLevel("MyLevel");
+//            Debug.Log("Level loaded!");
+//        }
+//    }
+//}
