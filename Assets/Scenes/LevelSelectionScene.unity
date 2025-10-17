@@ -168,6 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 592835874a51fc64f963e2dd2f98988e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
+  soundbutton: {fileID: 0}
+  SoundOn: {fileID: 0}
+  SoundOff: {fileID: 0}
 --- !u!114 &184783627
 MonoBehaviour:
   m_ObjectHideFlags: 0

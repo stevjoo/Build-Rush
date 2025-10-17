@@ -75,6 +75,9 @@ public class GridManager : MonoBehaviour
         _placedBlocks[gridPos] = newBlock;
         _blockIndices[gridPos] = selectedIndex;
 
+        // Debug
+        Debug.Log("Placed block: " + blockTypes[selectedIndex].name + " at " + gridPos);
+
 
         // Notify perubahan ke evaluator
         OnBlockPlaced?.Invoke(gridPos, selectedIndex);
@@ -100,6 +103,9 @@ public class GridManager : MonoBehaviour
         Destroy(_placedBlocks[gridPos]);
         _placedBlocks.Remove(gridPos);
         _blockIndices.Remove(gridPos);
+
+        // Debug
+        Debug.Log("Removed block at: " + gridPos);
 
 
         // Notify perubahan ke evaluator
