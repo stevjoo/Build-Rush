@@ -18,6 +18,8 @@ public class LevelSelectorManager : MonoBehaviour
     public Button selectButton;
     public GameObject lockImage;
 
+    public GameObject completeImage;
+
     private int currentLevelIndex = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -47,8 +49,14 @@ public class LevelSelectorManager : MonoBehaviour
         }
 
         LevelSelectionData level = levelList.levels[index];
-        
-        unlockLevel(level.levelID);
+
+        if(completeImage != null)
+        {
+            completeImage.SetActive(level.isCompleted);
+        }
+
+
+            unlockLevel(level.levelID);
         lockImage.SetActive(level.isLocked);
         selectButton.interactable = !level.isLocked;
 
@@ -105,10 +113,5 @@ public class LevelSelectorManager : MonoBehaviour
         
         SceneManager.LoadScene("MainMenuScene");
 
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

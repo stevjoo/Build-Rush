@@ -1,7 +1,16 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+using UnityEditor.ShaderGraph;
 
 public class BuilderController : MonoBehaviour
 {
+    [Header("UI")] 
+    public TextMeshProUGUI modeText;
+    public Image[] selectionOutlines;
+    public Sprite outlineActiveSprite;
+    public Sprite NormalSprite;
+
     [Header("References")] public GridManager gridManager;
     [Header("Block Placing")] public float behindOffset = 1.3f;
     public float minDistanceAfterDirChange = 1f;
@@ -72,10 +81,11 @@ public class BuilderController : MonoBehaviour
             if (!Input.GetKeyDown(key)) continue;
 
             int index = (i == 0) ? 9 : i - 1;
-            if (index < gridManager.blockTypes.Length)
+            if (index < gridManager.blockTypes.Length && index < selectionOutlines.Length)
             {
                 gridManager.selectedIndex = index;
                 Debug.Log("Selected block: " + gridManager.blockTypes[index].name);
+                UpdateSelectionUI();
             }
         }
     }
@@ -92,6 +102,7 @@ public class BuilderController : MonoBehaviour
     {
         currentMode = currentMode == mode ? BuildMode.None : mode;
         Debug.Log("Builder mode switched to: " + currentMode);
+        UpdateModeUI();
     }
 
     private void HandleJumpLandTransition(bool isGrounded)
@@ -187,6 +198,31 @@ public class BuilderController : MonoBehaviour
                               Mathf.FloorToInt(belowPos.z + 0.5f));
 
         if (gridManager.HasBlock(pos)) { gridManager.RemoveBlock(pos); breakCooldownTimer = breakCooldown; }
+    }
+
+    private void UpdateModeUI()
+    {
+        if(modeText != null)
+            modeText.text = "Mode: " + currentMode.ToString();
+    }
+
+    private void UpdateSelectionUI()
+    {
+        if(selectionOutlines == null || gridManager == null) return;
+
+        for (int i = 0; i < selectionOutlines.Length; i++)
+        {
+            if (selectionOutlines[i] == null) continue;
+
+            if (i == gridManager.selectedIndex)
+            {
+                selectionOutlines[i].sprite = outlineActiveSprite;
+            }
+            else
+            {
+                selectionOutlines[i].sprite = NormalSprite;
+            }
+        }
     }
     #endregion
 }

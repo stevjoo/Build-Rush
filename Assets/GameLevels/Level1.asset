@@ -17,6 +17,6 @@ MonoBehaviour:
   sceneName: 
   levelThumbnail: {fileID: 21300000, guid: a2a6bc127e3881945baeaaa20e66b176, type: 3}
   isLocked: 0
-  isCompleted: 1
+  isCompleted: 0
   timer: 360
   matchCount: 70

@@ -42,7 +42,7 @@ public class MainMenuController : MonoBehaviour
         if (levelData != null)
         {
             //sementara ku masukin ke builder scene duluwh
-            SceneManager.LoadScene("BuilderScene");
+            SceneManager.LoadScene("SampleScene");
         }
         else
         {
