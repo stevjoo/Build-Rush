@@ -1830,7 +1830,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Memory Blocks
+  m_text: Build Rush
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2edaa77117603974795dd3710176bd5d, type: 2}
   m_sharedMaterial: {fileID: -4349269341767903902, guid: 2edaa77117603974795dd3710176bd5d, type: 2}
@@ -1839,8 +1839,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4286047231
+  m_fontColor: {r: 1, g: 0.88994265, b: 0.4660377, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1857,7 +1857,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 365.35
+  m_fontSize: 400
   m_fontSizeBase: 500
   m_fontWeight: 400
   m_enableAutoSizing: 1
