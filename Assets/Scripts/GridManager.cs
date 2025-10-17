@@ -148,7 +148,7 @@ public class GridManager : MonoBehaviour
     }
 
     // Load
-    public void LoadLevel(string fileName)
+    public void LoadLevel(string fileName, Vector3 characterPosition)
     {
         string path = Application.dataPath + "/" + fileName + ".json";
         if (!System.IO.File.Exists(path)) return;
@@ -162,13 +162,34 @@ public class GridManager : MonoBehaviour
         _placedBlocks.Clear();
         _blockIndices.Clear();
 
-        // Spawn block baru
+        if (level.blocks.Count == 0) return;
+
+        // --- Hitung bounding box ---
+        Vector3Int min = level.blocks[0].position;
+        Vector3Int max = level.blocks[0].position;
+        foreach (var b in level.blocks)
+        {
+            min = Vector3Int.Min(min, b.position);
+            max = Vector3Int.Max(max, b.position);
+        }
+
+        Vector3Int size = max - min; // ukuran building
+
+        // --- Hitung offset ---
+        // Posisi karakter + 10 block di depan pada sumbu Z (misal karakter menghadap +Z)
+        Vector3 spawnPos = characterPosition + new Vector3(0, 0, 10f);
+
+        // Geser building sehingga bounding box belakang berada di spawnPos
+        Vector3Int offset = Vector3Int.RoundToInt(spawnPos - new Vector3(min.x + size.x / 2f, min.y, min.z));
+
+        // Spawn block baru dengan offset
         foreach (var b in level.blocks)
         {
             selectedIndex = b.blockIndex;
-            PlaceBlock(b.position);
+            PlaceBlock(b.position + offset);
         }
-        Debug.Log("Level loaded!");
+
+        Debug.Log("Level loaded at character front!");
     }
 
 

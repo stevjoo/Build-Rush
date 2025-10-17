@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator StartPreGamePhase()
     {
         // Load target level untuk preview
-        gridManager.LoadLevel(targetLevelFile);
+        gridManager.LoadLevel(targetLevelFile, new Vector3(0,1,0));
 
         // Load target level untuk evaluator
         evaluator.LoadLevel(targetLevelFile);
