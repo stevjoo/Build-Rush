@@ -7,7 +7,6 @@ public class LevelSelectorManager : MonoBehaviour
 {
     public LevelListContainer levelList;
 
-    public TMP_Text levelIDText;
     public TMP_Text levelNameText;
     public Image levelThumbnailImage;
     public TMP_Text levelTimeText;
@@ -60,10 +59,9 @@ public class LevelSelectorManager : MonoBehaviour
         lockImage.SetActive(level.isLocked);
         selectButton.interactable = !level.isLocked;
 
-        levelIDText.text = $"Level {level.levelID}";
+        levelNameText.text = $"Level {level.levelID} : {level.levelName}";
         levelMatchText.text = $"Match\t: {level.matchCount}%";
-        levelTimeText.text = $"Time\t: {level.timer/60}:{(level.timer%60).ToString("D2")}";
-        levelNameText.text = level.levelName;
+        levelTimeText.text = $"Time\t: {level.timer / 60}:{(level.timer % 60).ToString("D2")}";
         levelThumbnailImage.sprite = level.levelThumbnail;
 
         previousButton.interactable = (currentLevelIndex > 0);
