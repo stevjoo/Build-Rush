@@ -140,11 +140,19 @@ public class BuilderController : MonoBehaviour
     private Vector3Int GetOffsetBlockPosition(Vector3Int moveDir, float offset)
     {
         Vector3 worldOffset = Vector3.zero;
-        if (moveDir.x != 0) worldOffset = new Vector3(-moveDir.x * offset, 0, 0);
-        else if (moveDir.z != 0) worldOffset = new Vector3(0, 0, -moveDir.z * offset);
+        if (moveDir.x != 0)
+            worldOffset = new Vector3(-moveDir.x * offset, 0, 0);
+        else if (moveDir.z != 0)
+            worldOffset = new Vector3(0, 0, -moveDir.z * offset);
 
-        Vector3 pos = transform.position + worldOffset;
-        return new Vector3Int(Mathf.FloorToInt(pos.x + 0.5f), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z + 0.5f));
+        //Tambah sedikit offset vertikal agar sejajar lantai
+        Vector3 pos = transform.position + worldOffset + new Vector3(0, 0.5f, 0);
+
+        return new Vector3Int(
+            Mathf.FloorToInt(pos.x + 0.5f),
+            Mathf.FloorToInt(pos.y + 0.5f),
+            Mathf.FloorToInt(pos.z + 0.5f)
+        );
     }
 
     private void TryPlaceAbovePlayer()

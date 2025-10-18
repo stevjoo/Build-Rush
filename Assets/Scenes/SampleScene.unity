@@ -1322,15 +1322,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4d8fe21c51a56004a8b251bf9399369a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d8fe21c51a56004a8b251bf9399369a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d8fe21c51a56004a8b251bf9399369a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d8fe21c51a56004a8b251bf9399369a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1438,10 +1438,10 @@ MonoBehaviour:
   outlineActiveSprite: {fileID: 476389721, guid: a67ae298aa0f14a4c897ce652e489b3c, type: 3}
   NormalSprite: {fileID: 623011271, guid: a67ae298aa0f14a4c897ce652e489b3c, type: 3}
   gridManager: {fileID: 1350147730}
-  behindOffset: 1.3
-  minDistanceAfterDirChange: 0.95
-  verticalPlaceOffset: 1
-  minVerticalJumpHeight: 0.8
+  behindOffset: 1.2
+  minDistanceAfterDirChange: 0.9
+  verticalPlaceOffset: 0.8
+  minVerticalJumpHeight: 1.3
   breakCooldown: 1
   frontBreakDistance: 1
 --- !u!114 &586117428

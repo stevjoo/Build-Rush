@@ -182,7 +182,6 @@ public class GridManager : MonoBehaviour
         Vector3Int size = max - min; // ukuran building
 
         // --- Hitung offset ---
-        // Posisi karakter + 10 block di depan pada sumbu Z (misal karakter menghadap +Z)
         Vector3 spawnPos = characterPosition + new Vector3(0, 0, 10f);
 
         // Geser building sehingga bounding box belakang berada di spawnPos
