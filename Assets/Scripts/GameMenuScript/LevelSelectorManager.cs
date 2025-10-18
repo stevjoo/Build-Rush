@@ -7,7 +7,6 @@ public class LevelSelectorManager : MonoBehaviour
 {
     public LevelListContainer levelList;
 
-    public TMP_Text levelIDText;
     public TMP_Text levelNameText;
     public Image levelThumbnailImage;
     public TMP_Text levelTimeText;
@@ -17,6 +16,8 @@ public class LevelSelectorManager : MonoBehaviour
     public Button previousButton;
     public Button selectButton;
     public GameObject lockImage;
+
+    public GameObject completeImage;
 
     private int currentLevelIndex = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -47,15 +48,20 @@ public class LevelSelectorManager : MonoBehaviour
         }
 
         LevelSelectionData level = levelList.levels[index];
-        
-        unlockLevel(level.levelID);
+
+        if(completeImage != null)
+        {
+            completeImage.SetActive(level.isCompleted);
+        }
+
+
+            unlockLevel(level.levelID);
         lockImage.SetActive(level.isLocked);
         selectButton.interactable = !level.isLocked;
 
-        levelIDText.text = $"Level {level.levelID}";
+        levelNameText.text = $"Level {level.levelID} : {level.levelName}";
         levelMatchText.text = $"Match\t: {level.matchCount}%";
-        levelTimeText.text = $"Time\t: {level.timer/60}:{(level.timer%60).ToString("D2")}";
-        levelNameText.text = level.levelName;
+        levelTimeText.text = $"Time\t: {level.timer / 60}:{(level.timer % 60).ToString("D2")}";
         levelThumbnailImage.sprite = level.levelThumbnail;
 
         previousButton.interactable = (currentLevelIndex > 0);
@@ -105,10 +111,5 @@ public class LevelSelectorManager : MonoBehaviour
         
         SceneManager.LoadScene("MainMenuScene");
 
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

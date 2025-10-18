@@ -16,7 +16,7 @@ MonoBehaviour:
   levelName: Beginner House
   sceneName: 
   levelThumbnail: {fileID: 21300000, guid: 7b536ef0965c13047a87b1b0c7c1160a, type: 3}
-  isLocked: 0
+  isLocked: 1
   isCompleted: 0
   timer: 360
   matchCount: 70
