@@ -5,17 +5,17 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     bool musicOn = true;
-    //public Button soundbutton;
-    public Sprite SoundOn;
-    public Sprite SoundOff;
+    ////public Button soundbutton;
+    //public Sprite SoundOn;
+    //public Sprite SoundOff;
 
     private bool creditOpen = false;
-    public GameObject creditPanel;
+    private GameObject creditPanel;
 
     private void Start()
     {
         creditPanel = GameObject.Find("CreditPanel");
-        creditPanel.SetActive(false);
+        if (creditPanel != null) creditPanel.SetActive(false);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void GoToLevelSelect()

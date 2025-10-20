@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public LevelSelectionData currentLevelData;
 
     private MovementController movementController;
+    private GhostCameraController ghostCameraController;
     private bool inputLocked = false;
     public bool IsInputLocked() => inputLocked;
     private bool gameStarted = false;
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         movementController = FindObjectOfType<MovementController>();
+        ghostCameraController = ghostCamera.GetComponent<GhostCameraController>();
         StartCoroutine(StartPreGamePhase());
         messagePanel.SetActive(false);
         pausePanel.SetActive(false);
@@ -212,6 +214,7 @@ public class GameManager : MonoBehaviour
         inputLocked = true;
         if(movementController != null)
             movementController.movementLocked = true;
+        ghostCameraController.movementLocked = true;
     }
 
     public void ResumeGame()
@@ -222,5 +225,6 @@ public class GameManager : MonoBehaviour
         inputLocked = false;
         if(movementController != null)
             movementController.movementLocked = false;
+        ghostCameraController.movementLocked = false;
     }
 }

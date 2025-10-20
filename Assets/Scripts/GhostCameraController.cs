@@ -8,8 +8,11 @@ public class GhostCameraController : MonoBehaviour
     private float yaw = 0f;
     private float pitch = 0f;
 
+    [HideInInspector] public bool movementLocked = false;
+
     void Update()
     {
+        if (movementLocked) return;
         // Move
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
