@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -20,19 +21,38 @@ public class BuildAccuracyEvaluator : MonoBehaviour
 
 
 
-    // Load target level dari file JSON
+    // --- Load target level JSON (cross-platform safe) ---
     public void LoadLevel(string fileName)
     {
-        string path = Path.Combine(Application.dataPath, fileName + ".json");
+        StartCoroutine(LoadLevelCoroutine(fileName));
+    }
+
+    private IEnumerator LoadLevelCoroutine(string fileName)
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, fileName + ".json");
+        string json = null;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        // Android butuh UnityWebRequest
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Failed to load target file: " + path);
+            yield break;
+        }
+        json = www.downloadHandler.text;
+#else
         if (!File.Exists(path))
         {
-            Debug.LogError("Target file not found: " + path);
-            return;
+            Debug.LogError("❌ Target file not found: " + path);
+            yield break;
         }
+        json = File.ReadAllText(path);
+#endif
 
-        string json = File.ReadAllText(path);
         targetData = JsonUtility.FromJson<LevelData>(json);
-        Debug.Log($"Loaded target level: {fileName} with {targetData.blocks.Count} blocks");
+        Debug.Log($"Loaded target level: {fileName} ({targetData.blocks.Count} blocks)");
     }
 
 
