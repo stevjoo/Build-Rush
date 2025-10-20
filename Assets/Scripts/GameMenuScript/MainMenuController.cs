@@ -22,7 +22,8 @@ public class MainMenuController : MonoBehaviour
         UpdateLevel(selectedLevelID);
 
         SettingPanel = GameObject.Find("SettingPanel");
-        SettingPanel.SetActive(isSettingPanelActive);
+        if (SettingPanel != null) 
+            SettingPanel.SetActive(isSettingPanelActive);
 
     }
 

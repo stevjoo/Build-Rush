@@ -27,7 +27,8 @@ public class LevelSelectorManager : MonoBehaviour
     void Start()
     {
         SettingPanel = GameObject.Find("SettingPanel");
-        SettingPanel.SetActive(isSettingPanelActive);
+        if (SettingPanel != null)
+            SettingPanel.SetActive(isSettingPanelActive);
         
         if (levelList == null || levelList.levels.Count == 0)
         {

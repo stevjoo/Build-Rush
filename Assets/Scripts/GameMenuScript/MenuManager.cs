@@ -19,7 +19,8 @@ public class MenuManager : MonoBehaviour
     {
         isSettingPanelActive = false;
         SettingPanel = GameObject.Find("SettingPanel");
-        SettingPanel.SetActive(isSettingPanelActive);
+        if (SettingPanel != null) 
+            SettingPanel.SetActive(isSettingPanelActive);
 
         creditPanel = GameObject.Find("CreditPanel");
         if (creditPanel != null) creditPanel.SetActive(false);
