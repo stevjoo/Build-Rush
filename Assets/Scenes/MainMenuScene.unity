@@ -3170,8 +3170,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 52707599}
-        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+      - m_Target: {fileID: 52707598}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
@@ -3909,8 +3909,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 52707599}
-        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+      - m_Target: {fileID: 52707598}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
