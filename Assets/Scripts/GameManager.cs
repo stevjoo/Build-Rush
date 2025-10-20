@@ -75,6 +75,8 @@ public class GameManager : MonoBehaviour
 
         }
 
+        countdownText.text = string.Format("00:00");
+
         // Destroy target building jika countdown habis
         foreach (var kvp in gridManager.placedBlocks)
             Destroy(kvp.Value);
@@ -120,6 +122,8 @@ public class GameManager : MonoBehaviour
 
             yield return null;
         }
+
+        countdownText.text = string.Format("00:00");
 
         // --- Waktu habis ---
         gameStarted = false;
