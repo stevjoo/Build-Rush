@@ -11,10 +11,18 @@ public class GameManager : MonoBehaviour
     public GridManager gridManager;
     public BuildAccuracyEvaluator evaluator;
 
+    [Header("Cameras")]
+    public Camera playerCamera;
+    public Camera ghostCamera;
+
+    [Header("Player")]
+    public GameObject playerObject;
+
     [Header("Settings")]
     public string targetLevelFile = "target_level";
     public float previewTime = 5f; // detik target muncul sebelum hilang
     public float buildTime = 360f; // waktu maksimal build
+
 
     [Header("UI")]
     public TextMeshProUGUI countdownText; // Kalau pakai TextMeshPro
@@ -31,6 +39,8 @@ public class GameManager : MonoBehaviour
     private bool isPaused = false;
 
     private int score = 0;
+
+
 
     void Start()
     {
@@ -53,6 +63,21 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartPreGamePhase()
     {
+
+        // Lock player Movement
+        inputLocked = true;
+        if (movementController != null)
+            movementController.movementLocked = true;
+
+        // hide player
+        if (playerObject != null)
+            playerObject.SetActive(false);
+
+        // Switch camera ke ghost camera
+        if (playerCamera != null) playerCamera.gameObject.SetActive(false);
+        if (ghostCamera != null) ghostCamera.gameObject.SetActive(true);
+
+
         // Load target level untuk preview
         gridManager.LoadLevel(targetLevelFile, new Vector3(0,1,0));
 
@@ -79,6 +104,17 @@ public class GameManager : MonoBehaviour
 
         // agar GridManager tahu block sudah hilang
         gridManager.ClearInternalDictionaries();
+
+        // Switch back to player camera
+        if (ghostCamera != null) ghostCamera.gameObject.SetActive(false);
+        if (playerCamera != null) playerCamera.gameObject.SetActive(true);
+        if (playerObject != null) playerObject.SetActive(true);
+
+
+        // Unlock player movement 
+        inputLocked = false;
+        if (movementController != null)
+            movementController.movementLocked = false;
 
 
         //disini kasih image atau tulisan "Build Now!" di UI
