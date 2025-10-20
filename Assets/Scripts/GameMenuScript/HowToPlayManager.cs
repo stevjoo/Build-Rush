@@ -22,9 +22,14 @@ public class HowToPlayManager : MonoBehaviour
     // === PRIVATE VARIABLES ===
     private int _currentPageIndex = 0; // Tracks the current page
 
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
+
     // === UNITY LIFECYCLE METHODS ===
     void Start()
     {
+        SettingPanel = GameObject.Find("SettingPanel");
+        SettingPanel.SetActive(isSettingPanelActive);
         // 1. Initial Setup
         if (pageBackgrounds.Count == 0)
         {
@@ -91,5 +96,11 @@ public class HowToPlayManager : MonoBehaviour
         {
             Debug.LogWarning($"Attempted to set page to index {newIndex}, which is out of range.");
         }
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+        SettingPanel.SetActive(isSettingPanelActive);
     }
 }

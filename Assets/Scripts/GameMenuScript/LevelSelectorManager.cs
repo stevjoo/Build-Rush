@@ -20,9 +20,15 @@ public class LevelSelectorManager : MonoBehaviour
     public GameObject completeImage;
 
     private int currentLevelIndex = 0;
+
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        SettingPanel = GameObject.Find("SettingPanel");
+        SettingPanel.SetActive(isSettingPanelActive);
+        
         if (levelList == null || levelList.levels.Count == 0)
         {
             Debug.LogError("Level list is not assigned or empty.");
@@ -112,5 +118,11 @@ public class LevelSelectorManager : MonoBehaviour
         
         SceneManager.LoadScene("MainMenuScene");
 
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+        SettingPanel.SetActive(isSettingPanelActive);
     }
 }

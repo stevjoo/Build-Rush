@@ -12,8 +12,15 @@ public class MenuManager : MonoBehaviour
     private bool creditOpen = false;
     private GameObject creditPanel;
 
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
+
     private void Start()
     {
+        isSettingPanelActive = false;
+        SettingPanel = GameObject.Find("SettingPanel");
+        SettingPanel.SetActive(isSettingPanelActive);
+
         creditPanel = GameObject.Find("CreditPanel");
         if (creditPanel != null) creditPanel.SetActive(false);
     }
@@ -28,7 +35,7 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
-    
+
     /*public void ToggleMusic()
     {
         if (musicOn) {
@@ -49,12 +56,12 @@ public class MenuManager : MonoBehaviour
 
     public void QuitGame()
     {
-        #if UNITY_EDITOR
-            Debug.Log("Quit Game");
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        Debug.Log("Quit Game");
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
-        #endif
+#endif
     }
 
     public void HowToPlay()
@@ -66,5 +73,11 @@ public class MenuManager : MonoBehaviour
     {
         creditOpen = !creditOpen;
         creditPanel.SetActive(creditOpen);
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+        SettingPanel.SetActive(isSettingPanelActive);
     }
 }
