@@ -47,4 +47,14 @@ public class MenuManager : MonoBehaviour
             Application.Quit();
         #endif
     }
+
+    public void HowToPlay()
+    {
+        SceneManager.LoadScene("HowToPlayScene");
+    }
+
+    public void Credit()
+    {
+        SceneManager.LoadScene("CreditScene");
+    }
 }
