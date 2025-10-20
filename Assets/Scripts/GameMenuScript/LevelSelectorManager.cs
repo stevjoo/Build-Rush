@@ -21,14 +21,11 @@ public class LevelSelectorManager : MonoBehaviour
 
     private int currentLevelIndex = 0;
 
-    private GameObject SettingPanel;
-    private bool isSettingPanelActive = false;
+   
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SettingPanel = GameObject.Find("SettingPanel");
-        if (SettingPanel != null)
-            SettingPanel.SetActive(isSettingPanelActive);
+       
         
         if (levelList == null || levelList.levels.Count == 0)
         {
@@ -121,10 +118,5 @@ public class LevelSelectorManager : MonoBehaviour
 
     }
 
-    public void ToggleSettingsPanel()
-    {
-        if (SettingPanel == null) return;
-        isSettingPanelActive = !isSettingPanelActive;
-        SettingPanel.SetActive(isSettingPanelActive);
-    }
+    
 }

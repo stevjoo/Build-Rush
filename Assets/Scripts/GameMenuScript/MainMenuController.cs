@@ -10,8 +10,6 @@ public class MainMenuController : MonoBehaviour
     public TMP_Text LevelButtonText;
     public Image levelThumbnail;
 
-    private GameObject SettingPanel;
-    private bool isSettingPanelActive = false;
 
     public
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,9 +19,6 @@ public class MainMenuController : MonoBehaviour
 
         UpdateLevel(selectedLevelID);
 
-        SettingPanel = GameObject.Find("SettingPanel");
-        if (SettingPanel != null) 
-            SettingPanel.SetActive(isSettingPanelActive);
 
     }
 
@@ -58,10 +53,4 @@ public class MainMenuController : MonoBehaviour
     }
 
    
-    public void ToggleSettingsPanel()
-    {
-        if (SettingPanel == null) return;
-        isSettingPanelActive = !isSettingPanelActive;
-        SettingPanel.SetActive(isSettingPanelActive);
-    }
 }
