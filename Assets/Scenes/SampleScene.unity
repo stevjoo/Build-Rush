@@ -2097,13 +2097,14 @@ MonoBehaviour:
   playerObject: {fileID: 586117426}
   targetLevelFile: Level1
   previewTime: 30
-  buildTime: 360
+  buildTime: 180
   countdownText: {fileID: 1521638764}
   messagePanel: {fileID: 1098334825}
   messageText: {fileID: 612381928}
   continueText: {fileID: 888917453}
   pausePanel: {fileID: 641900562}
   pauseButton: {fileID: 1095813600}
+  currentLevelData: {fileID: 11400000, guid: 609ad4cad76bbcb439405dec11ace007, type: 2}
 --- !u!114 &688545548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2116,9 +2117,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 592835874a51fc64f963e2dd2f98988e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
-  soundbutton: {fileID: 0}
   SoundOn: {fileID: 0}
   SoundOff: {fileID: 0}
+  creditPanel: {fileID: 0}
 --- !u!1 &789202874
 GameObject:
   m_ObjectHideFlags: 0

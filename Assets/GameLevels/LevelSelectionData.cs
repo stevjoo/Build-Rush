@@ -9,7 +9,7 @@ public class LevelSelectionData : ScriptableObject
     public string sceneName;
     public Sprite levelThumbnail;
     public bool isLocked = true;
-    public bool isCompleted;
+    public bool isCompleted = false;
     public int timer;
     public int matchCount;
 }

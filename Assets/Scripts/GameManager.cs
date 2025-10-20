@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
     public GameObject pausePanel;
     public Button pauseButton;
 
+    [Header("Level Settings")]
+    public LevelSelectionData currentLevelData;
+
     private MovementController movementController;
     private bool inputLocked = false;
     public bool IsInputLocked() => inputLocked;
@@ -97,6 +100,8 @@ public class GameManager : MonoBehaviour
 
         }
 
+        countdownText.text = string.Format("00:00");
+
         // Destroy target building jika countdown habis
         foreach (var kvp in gridManager.placedBlocks)
             Destroy(kvp.Value);
@@ -154,6 +159,8 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        countdownText.text = string.Format("00:00");
+
         // --- Waktu habis ---
         gameStarted = false;
         evaluator.SetGameState(false);
@@ -166,6 +173,11 @@ public class GameManager : MonoBehaviour
 
 
         Debug.Log("Build time over! Final Accuracy: " + score + "%");
+
+        if (score >= 70)
+        {
+            currentLevelData.isCompleted = true;
+        }
 
         SceneManager.LoadScene("MainMenuScene");
     }
