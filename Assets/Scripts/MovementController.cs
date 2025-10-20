@@ -16,6 +16,11 @@ public class MovementController : MonoBehaviour
     private CharacterController characterController;
     private Vector3 velocity;
 
+    // === Tambahan untuk SFX ===
+    private bool isWalking = false;
+    private float stepCooldown = 0.4f; // waktu jeda antar langkah
+    private float stepTimer = 0f;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -23,20 +28,23 @@ public class MovementController : MonoBehaviour
 
     void Update()
     {
-        if(movementLocked) return;
+        if (movementLocked) return;
+
         HandleMovement();
         UpdateMoveDirectionGrid();
     }
 
     void HandleMovement()
     {
-        // Input raw
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
         Vector3 rawInput = new Vector3(x, 0, z);
 
         if (rawInput.magnitude < 0.01f)
+        {
             moveDirection = Vector3.zero;
+            isWalking = false; // berhenti jalan → stop bunyi
+        }
         else
         {
             Vector3 camForward = cameraTransform.forward;
@@ -48,7 +56,6 @@ public class MovementController : MonoBehaviour
 
             Vector3 targetDir = camRight * rawInput.x + camForward * rawInput.z;
 
-            // Snap ke 4 arah
             if (Mathf.Abs(targetDir.x) > Mathf.Abs(targetDir.z))
                 moveDirection = new Vector3(Mathf.Sign(targetDir.x), 0, 0);
             else
@@ -60,9 +67,11 @@ public class MovementController : MonoBehaviour
                 float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(0, targetAngle, 0);
             }
+
+            isWalking = true; // sedang bergerak
         }
 
-        // --- Jump dan Gravity ---
+        // --- Jump & Gravity ---
         if (characterController.isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
@@ -74,6 +83,22 @@ public class MovementController : MonoBehaviour
         // Gabungkan horizontal + vertikal
         Vector3 finalMove = moveDirection * speed + new Vector3(0, velocity.y, 0);
         characterController.Move(finalMove * Time.deltaTime);
+
+        // === Jalankan suara langkah ===
+        HandleFootstepSFX();
+    }
+
+    void HandleFootstepSFX()
+    {
+        if (isWalking && characterController.isGrounded)
+        {
+            stepTimer -= Time.deltaTime;
+            if (stepTimer <= 0f)
+            {
+                AudioManager.Instance.PlayWalkSFX();
+                stepTimer = stepCooldown; // reset jeda langkah
+            }
+        }
     }
 
     void UpdateMoveDirectionGrid()
