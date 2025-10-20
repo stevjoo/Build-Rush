@@ -60,6 +60,7 @@ public class MainMenuController : MonoBehaviour
    
     public void ToggleSettingsPanel()
     {
+        if (SettingPanel == null) return;
         isSettingPanelActive = !isSettingPanelActive;
         SettingPanel.SetActive(isSettingPanelActive);
     }
