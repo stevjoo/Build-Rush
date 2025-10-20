@@ -153,13 +153,28 @@ public class GridManager : MonoBehaviour
         Debug.Log("Level saved!");
     }
 
-    // Load
     public void LoadLevel(string fileName, Vector3 characterPosition)
     {
-        string path = Application.dataPath + "/" + fileName + ".json";
-        if (!System.IO.File.Exists(path)) return;
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, fileName + ".json");
 
-        string json = System.IO.File.ReadAllText(path);
+        // Baca file sesuai platform (Android, Windows, WebGL beda)
+        string json = "";
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    // Android: StreamingAssets diakses lewat UnityWebRequest
+    UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(path);
+    www.SendWebRequest();
+    while (!www.isDone) { }
+    json = www.downloadHandler.text;
+#else
+        if (!System.IO.File.Exists(path))
+        {
+            Debug.LogWarning("Level file not found: " + path);
+            return;
+        }
+        json = System.IO.File.ReadAllText(path);
+#endif
+
         LevelData level = JsonUtility.FromJson<LevelData>(json);
 
         // Bersihkan block lama
@@ -179,22 +194,17 @@ public class GridManager : MonoBehaviour
             max = Vector3Int.Max(max, b.position);
         }
 
-        Vector3Int size = max - min; // ukuran building
-
-        // --- Hitung offset ---
+        Vector3Int size = max - min;
         Vector3 spawnPos = characterPosition + new Vector3(0, 0, 10f);
-
-        // Geser building sehingga bounding box belakang berada di spawnPos
         Vector3Int offset = Vector3Int.RoundToInt(spawnPos - new Vector3(min.x + size.x / 2f, min.y, min.z));
 
-        // Spawn block baru dengan offset
         foreach (var b in level.blocks)
         {
             selectedIndex = b.blockIndex;
             PlaceBlock(b.position + offset);
         }
 
-        Debug.Log("Level loaded at character front!");
+        Debug.Log("Level loaded successfully from: " + path);
     }
 
 
