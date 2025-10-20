@@ -5,10 +5,18 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     bool musicOn = true;
-    public Button soundbutton;
+    //public Button soundbutton;
     public Sprite SoundOn;
     public Sprite SoundOff;
 
+    private bool creditOpen = false;
+    public GameObject creditPanel;
+
+    private void Start()
+    {
+        creditPanel = GameObject.Find("CreditPanel");
+        creditPanel.SetActive(false);
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void GoToLevelSelect()
     {
@@ -20,7 +28,8 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
-    public void ToggleMusic()
+    
+    /*public void ToggleMusic()
     {
         if (musicOn) {
             soundbutton.GetComponent<Image>().sprite = SoundOn;
@@ -36,7 +45,7 @@ public class MenuManager : MonoBehaviour
         {
             AudioListener.volume = 0f;
         }
-    }
+    }*/
 
     public void QuitGame()
     {
@@ -55,6 +64,7 @@ public class MenuManager : MonoBehaviour
 
     public void Credit()
     {
-        SceneManager.LoadScene("CreditScene");
+        creditOpen = !creditOpen;
+        creditPanel.SetActive(creditOpen);
     }
 }
