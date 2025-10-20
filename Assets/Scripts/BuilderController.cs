@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using UnityEditor.ShaderGraph;
 
 public class BuilderController : MonoBehaviour
 {
@@ -11,13 +10,17 @@ public class BuilderController : MonoBehaviour
     public Sprite outlineActiveSprite;
     public Sprite NormalSprite;
 
-    [Header("References")] public GridManager gridManager;
-    [Header("Block Placing")] public float behindOffset = 1.3f;
+    [Header("References")] 
+    public GridManager gridManager;
+
+    [Header("Block Placing")] 
+    public float behindOffset = 1.3f;
     public float minDistanceAfterDirChange = 1f;
     public float verticalPlaceOffset = 1.2f;
     public float minVerticalJumpHeight = 0.8f;
 
-    [Header("Block Breaking")] public float breakCooldown = 1f;
+    [Header("Block Breaking")] 
+    public float breakCooldown = 1f;
     public float frontBreakDistance = 1f;
 
     private Vector3Int lastPlacedPos = new(int.MinValue, int.MinValue, int.MinValue);
@@ -113,12 +116,20 @@ public class BuilderController : MonoBehaviour
 
     private void HandlePlaceMode(bool isGrounded)
     {
-        if (!isGrounded) { TryPlaceVerticalBelow(); return; }
+        if (!isGrounded)
+        {
+            TryPlaceVerticalBelow();
+            return;
+        }
 
         Vector3Int moveDir = moveController.moveDirectionGrid;
         if (moveDir == Vector3Int.zero) return;
 
-        if (moveDir != lastMoveDir) { moveSinceDirChange = 0f; lastMoveDir = moveDir; }
+        if (moveDir != lastMoveDir)
+        {
+            moveSinceDirChange = 0f;
+            lastMoveDir = moveDir;
+        }
 
         moveSinceDirChange += Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z),
                                                new Vector3(lastPlayerPosition.x, 0, lastPlayerPosition.z));
@@ -126,15 +137,26 @@ public class BuilderController : MonoBehaviour
         Vector3Int blockPos = GetOffsetBlockPosition(moveDir, behindOffset);
         if (moveSinceDirChange >= minDistanceAfterDirChange && blockPos != lastPlacedPos && !gridManager.HasBlock(blockPos))
         {
-            if (gridManager.PlaceBlock(blockPos)) { lastPlacedPos = blockPos; moveSinceDirChange = 0f; }
+            if (gridManager.PlaceBlock(blockPos))
+            {
+                lastPlacedPos = blockPos;
+                moveSinceDirChange = 0f;
+
+                // 🔊 mainkan suara saat build
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayPlaceSFX();
+            }
         }
     }
 
     private void HandleBreakMode(bool isGrounded)
     {
         Vector3Int moveDir = moveController.moveDirectionGrid;
-        if (moveDir != Vector3Int.zero) TryBreakFront(moveDir);
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S) && isGrounded) TryBreakBelow();
+        if (moveDir != Vector3Int.zero)
+            TryBreakFront(moveDir);
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S) && isGrounded)
+            TryBreakBelow();
     }
 
     private Vector3Int GetOffsetBlockPosition(Vector3Int moveDir, float offset)
@@ -145,7 +167,6 @@ public class BuilderController : MonoBehaviour
         else if (moveDir.z != 0)
             worldOffset = new Vector3(0, 0, -moveDir.z * offset);
 
-        //Tambah sedikit offset vertikal agar sejajar lantai
         Vector3 pos = transform.position + worldOffset + new Vector3(0, 0.5f, 0);
 
         return new Vector3Int(
@@ -165,7 +186,14 @@ public class BuilderController : MonoBehaviour
 
         if (pos == lastPlacedPos || gridManager.HasBlock(pos)) return;
 
-        if (gridManager.PlaceBlock(pos)) lastPlacedPos = pos;
+        if (gridManager.PlaceBlock(pos))
+        {
+            lastPlacedPos = pos;
+
+            // 🔊 suara place atas
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayPlaceSFX();
+        }
     }
 
     private void TryPlaceVerticalBelow()
@@ -180,7 +208,14 @@ public class BuilderController : MonoBehaviour
 
         if (pos == lastPlacedPos || gridManager.HasBlock(pos)) return;
 
-        if (gridManager.PlaceBlock(pos)) lastPlacedPos = pos;
+        if (gridManager.PlaceBlock(pos))
+        {
+            lastPlacedPos = pos;
+
+            // 🔊 suara place bawah
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayPlaceSFX();
+        }
     }
 
     private void TryBreakFront(Vector3Int dir)
@@ -194,6 +229,10 @@ public class BuilderController : MonoBehaviour
                 gridManager.RemoveBlock(pos);
                 lastBrokenPos = pos;
                 breakCooldownTimer = 0.2f;
+
+                // 🔊 suara delete
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayDeleteSFX();
             }
         }
     }
@@ -201,35 +240,40 @@ public class BuilderController : MonoBehaviour
     private void TryBreakBelow()
     {
         Vector3 belowPos = transform.position + Vector3.down * verticalPlaceOffset;
-        Vector3Int pos = new(Mathf.FloorToInt(belowPos.x + 0.5f),
-                              Mathf.FloorToInt(belowPos.y),
-                              Mathf.FloorToInt(belowPos.z + 0.5f));
+        Vector3Int pos = new(
+            Mathf.FloorToInt(belowPos.x + 0.5f),
+            Mathf.FloorToInt(belowPos.y),
+            Mathf.FloorToInt(belowPos.z + 0.5f)
+        );
 
-        if (gridManager.HasBlock(pos)) { gridManager.RemoveBlock(pos); breakCooldownTimer = breakCooldown; }
+        if (gridManager.HasBlock(pos))
+        {
+            gridManager.RemoveBlock(pos);
+            breakCooldownTimer = breakCooldown;
+
+            // 🔊 suara delete bawah
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayDeleteSFX();
+        }
     }
 
     private void UpdateModeUI()
     {
-        if(modeText != null)
+        if (modeText != null)
             modeText.text = "Mode: " + currentMode.ToString();
     }
 
     private void UpdateSelectionUI()
     {
-        if(selectionOutlines == null || gridManager == null) return;
+        if (selectionOutlines == null || gridManager == null) return;
 
         for (int i = 0; i < selectionOutlines.Length; i++)
         {
             if (selectionOutlines[i] == null) continue;
 
-            if (i == gridManager.selectedIndex)
-            {
-                selectionOutlines[i].sprite = outlineActiveSprite;
-            }
-            else
-            {
-                selectionOutlines[i].sprite = NormalSprite;
-            }
+            selectionOutlines[i].sprite = (i == gridManager.selectedIndex)
+                ? outlineActiveSprite
+                : NormalSprite;
         }
     }
     #endregion
