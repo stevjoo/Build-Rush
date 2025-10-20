@@ -1940,7 +1940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   gridManager: {fileID: 1350147730}
   evaluator: {fileID: 799143263}
-  targetLevelFile: Level2
+  targetLevelFile: Level1
   previewTime: 30
   buildTime: 360
   countdownText: {fileID: 1521638764}
