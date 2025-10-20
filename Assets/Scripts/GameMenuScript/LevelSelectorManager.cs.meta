@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 9456e2d5e260e5447aeb992c7b5425f2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - levelList: {instanceID: 0}
+  - levelIDText: {instanceID: 0}
+  - levelNameText: {instanceID: 0}
+  - levelThumbnailImage: {instanceID: 0}
+  - levelTimeText: {instanceID: 0}
+  - levelMatchText: {instanceID: 0}
+  - nextButton: {instanceID: 0}
+  - previousButton: {instanceID: 0}
+  - selectButton: {instanceID: 0}
+  - lockImage: {instanceID: 0}
+  - completeImage: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -9,6 +9,7 @@ public class MovementController : MonoBehaviour
 
     [HideInInspector] public Vector3 moveDirection; // world space
     [HideInInspector] public Vector3Int moveDirectionGrid; // snapped direction (x,z)
+    [HideInInspector] public bool movementLocked = false;
 
     public float jumpHeight = 1.5f;
 
@@ -22,6 +23,7 @@ public class MovementController : MonoBehaviour
 
     void Update()
     {
+        if(movementLocked) return;
         HandleMovement();
         UpdateMoveDirectionGrid();
     }

@@ -32,7 +32,7 @@ public class AnimationController : MonoBehaviour
         // --- Set Parameter ---
         anim.SetBool("isWalking", isMoving && isGrounded);
         anim.SetBool("isIdle", !isMoving && isGrounded);
-        anim.SetBool("isJumping", !isGrounded);
+        //anim.SetBool("isJumping", !isGrounded);
         anim.SetFloat("yVelocity", yVelocity);
         anim.SetBool("isGrounded", isGrounded);
 

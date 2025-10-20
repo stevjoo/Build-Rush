@@ -6,11 +6,10 @@ public class BlockType
 {
     public string name;         // Nama blok (misal: "Wood", "Stone")
     public GameObject prefab;   // Prefab blok
-    //public Color color = Color.white; // Warna blok, opsional
 }
 
 
-// Struktur data untuk menyimpan informasi blok dalam level
+// Struktur data untuk menyimpan informasi blok
 [System.Serializable]
 public class BlockData
 {
@@ -18,7 +17,7 @@ public class BlockData
     public int blockIndex;
 }
 
-// Struktur data untuk menyimpan seluruh level
+// Struktur data untuk menyimpan 1 level
 [System.Serializable]
 public class LevelData
 {
@@ -35,13 +34,24 @@ public class GridManager : MonoBehaviour
     // Tipe blok yang tersedia
     public BlockType[] blockTypes;
 
- 
+
+
+    // Private variable, hanya bisa diakses di gridmanager
     // Simpan pair posisi : GameObject
-    private Dictionary<Vector3Int, GameObject> placedBlocks = new();
+    private Dictionary<Vector3Int, GameObject> _placedBlocks = new();
 
     // Simpan pair posisi : tipe blok (index)
-    private Dictionary<Vector3Int, int> blockIndices = new();
+    private Dictionary<Vector3Int, int> _blockIndices = new();
 
+
+    // Event untuk notify perubahan ke evaluator
+    public event System.Action<Vector3Int, int> OnBlockPlaced;
+    public event System.Action<Vector3Int> OnBlockRemoved;
+
+
+    // Getter untuk akses dari luar
+    public IReadOnlyDictionary<Vector3Int, GameObject> placedBlocks { get { return _placedBlocks; } }
+    public IReadOnlyDictionary<Vector3Int, int> blockIndices { get { return _blockIndices; } }
 
 
     // Pilihan index blok yang aktif
@@ -53,7 +63,7 @@ public class GridManager : MonoBehaviour
     public bool PlaceBlock(Vector3Int gridPos)
     {
         // Cek apakah posisi sudah ada blocknya
-        if (placedBlocks.ContainsKey(gridPos))
+        if (_placedBlocks.ContainsKey(gridPos))
             return false;
 
         // Cek apakah posisi di dalam batas grid, center gridnya di (0,0,0)
@@ -62,8 +72,15 @@ public class GridManager : MonoBehaviour
 
         // Instantiate block baru dan simpan di dictionary
         GameObject newBlock = Instantiate(blockTypes[selectedIndex].prefab, gridPos, Quaternion.identity);
-        placedBlocks[gridPos] = newBlock;
-        blockIndices[gridPos] = selectedIndex;
+        _placedBlocks[gridPos] = newBlock;
+        _blockIndices[gridPos] = selectedIndex;
+
+        // Debug
+        Debug.Log("Placed block: " + blockTypes[selectedIndex].name + " at " + gridPos);
+
+
+        // Notify perubahan ke evaluator
+        OnBlockPlaced?.Invoke(gridPos, selectedIndex);
 
         return true;
     }
@@ -74,7 +91,7 @@ public class GridManager : MonoBehaviour
     public bool RemoveBlock(Vector3Int gridPos)
     {
         // Cek apakah posisi ada blocknya
-        if (!placedBlocks.ContainsKey(gridPos))
+        if (!_placedBlocks.ContainsKey(gridPos))
         {
 
             Debug.Log("No block found at: " + gridPos);
@@ -83,9 +100,17 @@ public class GridManager : MonoBehaviour
            
 
         // Hapus block dari scene dan dictionary
-        Destroy(placedBlocks[gridPos]);
-        placedBlocks.Remove(gridPos);
-        blockIndices.Remove(gridPos);
+        Destroy(_placedBlocks[gridPos]);
+        _placedBlocks.Remove(gridPos);
+        _blockIndices.Remove(gridPos);
+
+        // Debug
+        Debug.Log("Removed block at: " + gridPos);
+
+
+        // Notify perubahan ke evaluator
+        OnBlockRemoved?.Invoke(gridPos);
+
         return true;
     }
 
@@ -94,15 +119,22 @@ public class GridManager : MonoBehaviour
     // Cek apakah ada block di posisi tertentu
     public bool HasBlock(Vector3Int gridPos)
     {
-        return placedBlocks.ContainsKey(gridPos);
+        return _placedBlocks.ContainsKey(gridPos);
     }
 
     public int GetBlockType(Vector3Int gridPos)
     {
-        if (!blockIndices.ContainsKey(gridPos))
+        if (!_blockIndices.ContainsKey(gridPos))
             return -1; // Tidak ada blok
 
-        return blockIndices[gridPos]; // Mengembalikan index tipe blok
+        return _blockIndices[gridPos]; // Mengembalikan index tipe blok
+    }
+
+    // Hapus seluruh data block saat ini
+    public void ClearInternalDictionaries()
+    {
+        _placedBlocks.Clear();
+        _blockIndices.Clear();
     }
 
 
@@ -111,9 +143,9 @@ public class GridManager : MonoBehaviour
     public void SaveLevel(string fileName)
     {
         LevelData level = new LevelData();
-        foreach (var kvp in placedBlocks)
+        foreach (var kvp in _placedBlocks)
         {
-            level.blocks.Add(new BlockData { position = kvp.Key, blockIndex = blockIndices[kvp.Key] });
+            level.blocks.Add(new BlockData { position = kvp.Key, blockIndex = _blockIndices[kvp.Key] });
         }
 
         string json = JsonUtility.ToJson(level, true);
@@ -122,7 +154,7 @@ public class GridManager : MonoBehaviour
     }
 
     // Load
-    public void LoadLevel(string fileName)
+    public void LoadLevel(string fileName, Vector3 characterPosition)
     {
         string path = Application.dataPath + "/" + fileName + ".json";
         if (!System.IO.File.Exists(path)) return;
@@ -131,18 +163,38 @@ public class GridManager : MonoBehaviour
         LevelData level = JsonUtility.FromJson<LevelData>(json);
 
         // Bersihkan block lama
-        foreach (var kvp in placedBlocks.Values)
+        foreach (var kvp in _placedBlocks.Values)
             Destroy(kvp);
-        placedBlocks.Clear();
-        blockIndices.Clear();
+        _placedBlocks.Clear();
+        _blockIndices.Clear();
 
-        // Spawn block baru
+        if (level.blocks.Count == 0) return;
+
+        // --- Hitung bounding box ---
+        Vector3Int min = level.blocks[0].position;
+        Vector3Int max = level.blocks[0].position;
+        foreach (var b in level.blocks)
+        {
+            min = Vector3Int.Min(min, b.position);
+            max = Vector3Int.Max(max, b.position);
+        }
+
+        Vector3Int size = max - min; // ukuran building
+
+        // --- Hitung offset ---
+        Vector3 spawnPos = characterPosition + new Vector3(0, 0, 10f);
+
+        // Geser building sehingga bounding box belakang berada di spawnPos
+        Vector3Int offset = Vector3Int.RoundToInt(spawnPos - new Vector3(min.x + size.x / 2f, min.y, min.z));
+
+        // Spawn block baru dengan offset
         foreach (var b in level.blocks)
         {
             selectedIndex = b.blockIndex;
-            PlaceBlock(b.position);
+            PlaceBlock(b.position + offset);
         }
-        Debug.Log("Level loaded!");
+
+        Debug.Log("Level loaded at character front!");
     }
 
 
