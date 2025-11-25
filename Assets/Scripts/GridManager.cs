@@ -88,25 +88,42 @@ public class GridManager : MonoBehaviour
 
 
     // remove block di posisi tertentu
+    // remove block di posisi tertentu
     public bool RemoveBlock(Vector3Int gridPos)
     {
         // Cek apakah posisi ada blocknya
         if (!_placedBlocks.ContainsKey(gridPos))
         {
-
             Debug.Log("No block found at: " + gridPos);
             return false;
         }
-           
 
-        // Hapus block dari scene dan dictionary
-        Destroy(_placedBlocks[gridPos]);
+        // 1. Ambil referensi GameObject-nya dulu sebelum dihapus dari list
+        GameObject blockObj = _placedBlocks[gridPos];
+
+        // 2. Hapus data dari Dictionary AGAR Logic game menganggapnya sudah kosong
+        // (Jadi player bisa langsung jatuh atau taruh blok baru, walau visualnya masih ada sebentar)
         _placedBlocks.Remove(gridPos);
         _blockIndices.Remove(gridPos);
 
+        // 3. Cek apakah ada script animasi (BlockBounceNative) di balok tersebut atau anaknya
+        // Kita pakai GetComponentInChildren karena scriptnya ada di Child (Visual)
+        var animScript = blockObj.GetComponentInChildren<BlockBounceNative>();
+
+        if (animScript != null)
+        {
+            // OPSI A: Jika ada script animasi, suruh dia animasi Destroy
+            // Nanti script itu yang akan memanggil Destroy(gameObject) sendiri setelah animasi selesai
+            animScript.StartDestroySequence();
+        }
+        else
+        {
+            // OPSI B: Jika tidak ada script animasi, hapus instan (seperti biasa)
+            Destroy(blockObj);
+        }
+
         // Debug
         Debug.Log("Removed block at: " + gridPos);
-
 
         // Notify perubahan ke evaluator
         OnBlockRemoved?.Invoke(gridPos);
