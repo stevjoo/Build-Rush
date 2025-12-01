@@ -48,6 +48,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // Reset time scale
+        Time.timeScale = 1f;
+
         movementController = FindObjectOfType<MovementController>();
         ghostCameraController = ghostCamera.GetComponent<GhostCameraController>();
         StartCoroutine(StartPreGamePhase());
