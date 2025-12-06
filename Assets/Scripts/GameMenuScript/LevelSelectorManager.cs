@@ -21,12 +21,18 @@ public class LevelSelectorManager : MonoBehaviour
 
     private int currentLevelIndex = 0;
 
-   
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       
-        
+        isSettingPanelActive = false;
+        SettingPanel = GameObject.Find("SettingPanel");
+        if (SettingPanel != null)
+            SettingPanel.SetActive(isSettingPanelActive);
+
         if (levelList == null || levelList.levels.Count == 0)
         {
             Debug.LogError("Level list is not assigned or empty.");
@@ -56,6 +62,7 @@ public class LevelSelectorManager : MonoBehaviour
         if(completeImage != null)
         {
             completeImage.SetActive(level.isCompleted);
+            iTween.ScaleFrom(completeImage, iTween.Hash("x", 0, "y", 0, "time", 1f, "delay", 0f, "easeType", "easeOutQuart"));
         }
 
 
@@ -118,5 +125,24 @@ public class LevelSelectorManager : MonoBehaviour
 
     }
 
-    
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+        if (isSettingPanelActive)
+        {
+            SettingPanel.SetActive(true);
+            iTween.MoveFrom(SettingPanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+        }
+        else
+        {
+            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
+        }
+    }
+
+    void DeactivateSettingPanel()
+    {
+        SettingPanel.SetActive(false);
+    }
+
+
 }

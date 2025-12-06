@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
     public GameObject pausePanel;
     public Button pauseButton;
 
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
+
     [Header("Level Settings")]
     public LevelSelectionData currentLevelData;
 
@@ -55,7 +58,14 @@ public class GameManager : MonoBehaviour
         ghostCameraController = ghostCamera.GetComponent<GhostCameraController>();
         StartCoroutine(StartPreGamePhase());
         messagePanel.SetActive(false);
-        pausePanel.SetActive(false);
+
+        if(pausePanel != null)
+            pausePanel.SetActive(false);
+
+        isSettingPanelActive = false;
+        SettingPanel = GameObject.Find("SettingPanel");
+        if (SettingPanel != null)
+            SettingPanel.SetActive(isSettingPanelActive);
     }
 
     private void Update()
@@ -192,6 +202,7 @@ public class GameManager : MonoBehaviour
         inputLocked = true;
         movementController.movementLocked = true;
         messagePanel.SetActive(true);
+        //iTween.ScaleFrom(messagePanel, iTween.Hash("x", 0, "y", 0, "time", 1f, "delay", 0f, "easeType", "easeOutQuart"));
         messageText.text = message;
         continueText.gameObject.SetActive(showClickMsg);
         // Tunggu klik/tap user
@@ -207,12 +218,14 @@ public class GameManager : MonoBehaviour
         messagePanel.SetActive(false);
         inputLocked = false;
         movementController.movementLocked = false;
+
     }
 
     public void PauseGame()
     {
         isPaused = true;
         pausePanel.SetActive(true);
+        //iTween.MoveFrom(pausePanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
         Time.timeScale = 0f;
         inputLocked = true;
         if(movementController != null)
@@ -223,11 +236,43 @@ public class GameManager : MonoBehaviour
     public void ResumeGame()
     {
         isPaused = false;
+        //iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "ResumeGameSetting", "oncompletetarget", GameObject.Find("Canvas").gameObject));
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
         inputLocked = false;
-        if(movementController != null)
+        if (movementController != null)
             movementController.movementLocked = false;
         ghostCameraController.movementLocked = false;
+
+    }
+
+    void ResumeGameSetting()
+    {
+        pausePanel.SetActive(false);
+        Time.timeScale = 1f;
+        inputLocked = false;
+        if (movementController != null)
+            movementController.movementLocked = false;
+        ghostCameraController.movementLocked = false;
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+        if (isSettingPanelActive)
+        {
+            SettingPanel.SetActive(true);
+            //iTween.MoveFrom(SettingPanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+        }
+        else
+        {
+            SettingPanel.SetActive(false);
+            //iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "DeactivateSettingPanel", "oncompletetarget", GameObject.Find("Canvas").gameObject));
+        }
+    }
+
+    void DeactivateSettingPanel()
+    {
+        SettingPanel.SetActive(false);
     }
 }

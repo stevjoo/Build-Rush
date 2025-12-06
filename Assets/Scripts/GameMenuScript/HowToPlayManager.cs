@@ -28,8 +28,10 @@ public class HowToPlayManager : MonoBehaviour
     // === UNITY LIFECYCLE METHODS ===
     void Start()
     {
+        isSettingPanelActive = false;
         SettingPanel = GameObject.Find("SettingPanel");
-        SettingPanel.SetActive(isSettingPanelActive);
+        if (SettingPanel != null)
+            SettingPanel.SetActive(isSettingPanelActive);
         // 1. Initial Setup
         if (pageBackgrounds.Count == 0)
         {
@@ -101,6 +103,19 @@ public class HowToPlayManager : MonoBehaviour
     public void ToggleSettingsPanel()
     {
         isSettingPanelActive = !isSettingPanelActive;
-        SettingPanel.SetActive(isSettingPanelActive);
+        if (isSettingPanelActive)
+        {
+            SettingPanel.SetActive(true);
+            iTween.MoveFrom(SettingPanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+        }
+        else
+        {
+            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
+        }
+    }
+
+    void DeactivateSettingPanel()
+    {
+        SettingPanel.SetActive(false);
     }
 }

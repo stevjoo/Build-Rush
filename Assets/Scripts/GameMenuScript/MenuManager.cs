@@ -9,21 +9,9 @@ public class MenuManager : MonoBehaviour
     //public Sprite SoundOn;
     //public Sprite SoundOff;
 
-    private bool creditOpen = false;
-    private GameObject creditPanel;
-
-    private GameObject SettingPanel;
-    private bool isSettingPanelActive = false;
-
     private void Start()
     {
-        isSettingPanelActive = false;
-        SettingPanel = GameObject.Find("SettingPanel");
-        if (SettingPanel != null) 
-            SettingPanel.SetActive(isSettingPanelActive);
-
-        creditPanel = GameObject.Find("CreditPanel");
-        if (creditPanel != null) creditPanel.SetActive(false);
+        
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void GoToLevelSelect()
@@ -67,15 +55,4 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("HowToPlayScene");
     }
 
-    public void Credit()
-    {
-        creditOpen = !creditOpen;
-        creditPanel.SetActive(creditOpen);
-    }
-
-    public void ToggleSettingsPanel()
-    {
-        isSettingPanelActive = !isSettingPanelActive;
-        SettingPanel.SetActive(isSettingPanelActive);
-    }
 }
