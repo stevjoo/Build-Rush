@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public GameObject playerObject;
 
     [Header("Settings")]
+    public LevelListContainer levelListContainer;
+    public int selectedLevelID = 1;
     public string targetLevelFile = "target_level";
     public float previewTime = 5f; // detik target muncul sebelum hilang
     public float buildTime = 360f; // waktu maksimal build
@@ -54,6 +56,9 @@ public class GameManager : MonoBehaviour
         // Reset time scale
         Time.timeScale = 1f;
 
+        selectedLevelID = PlayerPrefs.GetInt("SelectedLevelID", 1);
+        UpdateLevelData(selectedLevelID);
+
         movementController = FindObjectOfType<MovementController>();
         ghostCameraController = ghostCamera.GetComponent<GhostCameraController>();
         StartCoroutine(StartPreGamePhase());
@@ -66,6 +71,20 @@ public class GameManager : MonoBehaviour
         SettingPanel = GameObject.Find("SettingPanel");
         if (SettingPanel != null)
             SettingPanel.SetActive(isSettingPanelActive);
+    }
+
+    void UpdateLevelData(int levelID)
+    {
+        currentLevelData = levelListContainer.GetLevelByID(levelID);
+        if (currentLevelData != null)
+        {
+            targetLevelFile = currentLevelData.levelJson;
+            buildTime = currentLevelData.timer;
+        }
+        else
+        {
+            Debug.LogError($"Level with ID {levelID} not found.");
+        }
     }
 
     private void Update()

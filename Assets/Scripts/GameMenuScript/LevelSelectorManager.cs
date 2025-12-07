@@ -66,7 +66,7 @@ public class LevelSelectorManager : MonoBehaviour
         }
 
 
-            //unlockLevel(level.levelID);
+        unlockLevel(level.levelID);
         lockImage.SetActive(level.isLocked);
         selectButton.interactable = !level.isLocked;
 
@@ -80,17 +80,17 @@ public class LevelSelectorManager : MonoBehaviour
     }
     
     
-    //public void unlockLevel(int levelID)
-    //{
-    //    LevelSelectionData level = levelList.GetLevelByID(levelID);
-    //    if (level != null)
-    //    {
-    //        if(level.levelID > 1 && levelList.GetLevelByID(levelID - 1).isCompleted)
-    //        {
-    //            level.isLocked = false;
-    //        }
-    //    }
-    //}
+    public void unlockLevel(int levelID)
+    {
+        LevelSelectionData level = levelList.GetLevelByID(levelID);
+        if (level != null)
+        {
+            if(level.levelID > 1 && levelList.GetLevelByID(levelID - 1).isCompleted)
+            {
+                level.isLocked = false;
+            }
+        }
+    }
 
     public void NextLevel()
     {

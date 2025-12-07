@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelSelectionData
   levelID: 2
   levelName: Beginner House
-  sceneName: 
+  levelJson: Level2
   levelThumbnail: {fileID: 21300000, guid: 25a74c4365005ce4f92d5bb00abddbb1, type: 3}
   isLocked: 1
   isCompleted: 0
-  timer: 360
+  timer: 180
   matchCount: 70
