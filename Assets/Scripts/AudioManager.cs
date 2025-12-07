@@ -1,3 +1,4 @@
+using NUnit.Framework.Internal.Commands;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -25,6 +26,7 @@ public class AudioManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
     }
 

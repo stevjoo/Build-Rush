@@ -1503,10 +1503,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff39dae7d9658c439958a68dd70418b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  bgmButton: {fileID: 1527595109}
-  bgmOnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmOffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmSource: {fileID: 1762281361}
+  Button: {fileID: 1527595109}
+  OnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  OffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  PrefName: BGM_ON
 --- !u!114 &1527595109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1943,6 +1943,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1762281362}
   - component: {fileID: 1762281361}
+  - component: {fileID: 1762281363}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -2062,6 +2063,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1762281363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762281360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28264f59f038d44ab2e4e16f9cb913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleAudio
+  isBGM: 1
+  isSFX: 0
+  bgmKey: BGM_ON
+  sfxKey: SFX_ON
 --- !u!1 &2018677941
 GameObject:
   m_ObjectHideFlags: 0

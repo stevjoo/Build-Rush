@@ -1,37 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SoundManager : MonoBehaviour
+public class SoundToggleButton : MonoBehaviour
 {
     [Header("UI Buttons")]
-    public Button bgmButton;
+    public Button Button;
 
     [Header("Sprites")]
-    public Sprite bgmOnSprite;
-    public Sprite bgmOffSprite;
+    public Sprite OnSprite;
+    public Sprite OffSprite;
 
-    [Header("Audio Sources")]
-    public AudioSource bgmSource;
+    [Header("Pref Name")]
+    public string PrefName;
 
-    private bool isBgmOn = true;
+    private bool isOn = true;
 
     void Start()
     {
-        if (bgmButton != null) bgmButton.onClick.AddListener(ToggleBGM);
+        isOn = PlayerPrefs.GetInt(PrefName, 1) == 1;
+        if(Button)
+            Button.onClick.AddListener(Toggle);
 
         UpdateButtonVisuals();
     }
 
-    void ToggleBGM()
+    void Toggle()
     {
-        isBgmOn = !isBgmOn;
+        isOn = !isOn;
 
-        if (bgmSource != null)
-        {
-            bgmSource.enabled = isBgmOn;
-            if (isBgmOn) bgmSource.Play();
-            else bgmSource.Stop();
-        }
+        PlayerPrefs.SetInt(PrefName, isOn ? 1 : 0);
+        PlayerPrefs.Save();
 
         UpdateButtonVisuals();
     }
@@ -39,9 +37,9 @@ public class SoundManager : MonoBehaviour
     void UpdateButtonVisuals()
     {
         // Change BGM button sprite
-        if (bgmButton != null && bgmButton.image != null)
+        if (Button != null && Button.image != null)
         {
-            bgmButton.image.sprite = isBgmOn ? bgmOnSprite : bgmOffSprite;
+            Button.image.sprite = isOn ? OnSprite : OffSprite;
         }
 
         
