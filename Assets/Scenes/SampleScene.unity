@@ -2901,7 +2901,7 @@ MonoBehaviour:
   playerObject: {fileID: 586117426}
   levelListContainer: {fileID: 11400000, guid: a975671ecb70a224191895daa75479fe, type: 2}
   selectedLevelID: 1
-  targetLevelFile: Level2
+  targetLevelFile: Level1
   previewTime: 30
   buildTime: 180
   countdownText: {fileID: 1521638764}
