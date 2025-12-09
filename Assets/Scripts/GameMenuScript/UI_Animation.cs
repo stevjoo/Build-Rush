@@ -17,6 +17,7 @@ public class UI_Animation : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Time.timeScale = 1f;
         isSettingPanelActive = false;
         SettingPanel = GameObject.Find("SettingPanel");
         if (SettingPanel != null)
