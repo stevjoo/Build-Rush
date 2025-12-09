@@ -16,7 +16,7 @@ MonoBehaviour:
   levelName: Apple
   levelJson: Level3
   levelThumbnail: {fileID: 21300000, guid: aee7078cfd819284eb01b8080e4aab94, type: 3}
-  isLocked: 1
+  isLocked: 0
   isCompleted: 0
   timer: 180
   matchCount: 70
