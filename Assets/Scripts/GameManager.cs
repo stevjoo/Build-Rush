@@ -50,6 +50,9 @@ public class GameManager : MonoBehaviour
 
     private int score = 0;
 
+    private Vector3 settingStartPos;
+    private Vector3 pauseStartPos;
+
     void Start()
     {
         // Reset time scale
@@ -63,15 +66,21 @@ public class GameManager : MonoBehaviour
         StartCoroutine(StartPreGamePhase());
         messagePanel.SetActive(false);
 
-        if(pausePanel != null)
+        if (pausePanel != null)
+        {
             pausePanel.SetActive(false);
+            pauseStartPos = pausePanel.transform.localPosition;
+        }
 
         isSettingPanelActive = false;
         SettingPanel = GameObject.Find("SettingPanel");
         if (SettingPanel != null)
+        {
             SettingPanel.SetActive(isSettingPanelActive);
+            settingStartPos = SettingPanel.transform.localPosition;
+        }
 
-        LockCursor();
+      
     }
 
     void UpdateLevelData(int levelID)
@@ -227,7 +236,6 @@ public class GameManager : MonoBehaviour
             movementController.movementLocked = true;
 
         Time.timeScale = 0f;
-        UnlockCursor();
 
         messagePanel.SetActive(true);
         //iTween.ScaleFrom(messagePanel, iTween.Hash("x", 0, "y", 0, "time", 1f, "delay", 0f, "easeType", "easeOutQuart"));
@@ -246,7 +254,7 @@ public class GameManager : MonoBehaviour
         messagePanel.SetActive(false);
 
         Time.timeScale = 1f;
-        LockCursor();
+
 
         inputLocked = false;
         if (movementController != null)
@@ -258,57 +266,71 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        if (isPaused) return;
+
         isPaused = true;
+
         pausePanel.SetActive(true);
-        //iTween.MoveFrom(pausePanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+
+        pausePanel.transform.localPosition = new Vector3(pauseStartPos.x, 1000, pauseStartPos.z);
+
+        iTween.MoveTo(pausePanel, iTween.Hash("position", pauseStartPos, "islocal", true,  "time", 0.6f, "easeType", iTween.EaseType.easeOutExpo, "ignoretimescale", true));
         Time.timeScale = 0f;
+
         inputLocked = true;
         if(movementController != null)
             movementController.movementLocked = true;
-        ghostCameraController.movementLocked = true;
 
-        UnlockCursor();
+        if(ghostCameraController != null)
+            ghostCameraController.movementLocked = true;
+
+       
     }
 
     public void ResumeGame()
     {
+        if (!isPaused) return;
+
         isPaused = false;
-        //iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "ResumeGameSetting", "oncompletetarget", GameObject.Find("Canvas").gameObject));
+
+        iTween.MoveTo(pausePanel, iTween.Hash("y", 1000, "islocal", true, "time", 0.6f, "easeType", iTween.EaseType.easeInExpo, "ignoretimescale", true, "oncomplete", "DeactivatePausePanel", "oncompletetarget", gameObject));
+        
+    }
+
+    void DeactivatePausePanel()
+    {
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
         inputLocked = false;
         if (movementController != null)
             movementController.movementLocked = false;
-        ghostCameraController.movementLocked = false;
+        if (ghostCameraController != null)
+            ghostCameraController.movementLocked = false;
 
-        LockCursor();
-
+        
     }
 
     public void ToggleSettingsPanel()
     {
         isSettingPanelActive = !isSettingPanelActive;
+
+        iTween.Stop(SettingPanel);
+
         if (isSettingPanelActive)
         {
             SettingPanel.SetActive(true);
-            //iTween.MoveFrom(SettingPanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+            SettingPanel.transform.localPosition = new Vector3(settingStartPos.x, 1000, settingStartPos.z);
+            iTween.MoveTo(SettingPanel, iTween.Hash("position", settingStartPos, "islocal", true, "time", 0.8f, "easeType", iTween.EaseType.easeOutExpo, "ignoretimescale", true));
         }
         else
         {
-            SettingPanel.SetActive(false);
-            //iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "DeactivateSettingPanel", "oncompletetarget", GameObject.Find("Canvas").gameObject));
+            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "islocal", true, "time", 0.6f, "easeType", iTween.EaseType.easeInExpo, "ignoretimescale", true, "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
         }
     }
 
-    private void LockCursor()
+    void DeactivateSettingPanel()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        SettingPanel.SetActive(false);
     }
 
-    private void UnlockCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
 }

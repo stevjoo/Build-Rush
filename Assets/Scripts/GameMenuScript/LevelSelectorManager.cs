@@ -24,6 +24,7 @@ public class LevelSelectorManager : MonoBehaviour
     private GameObject SettingPanel;
     private bool isSettingPanelActive = false;
 
+    private Vector3 settingStartPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,7 +32,10 @@ public class LevelSelectorManager : MonoBehaviour
         isSettingPanelActive = false;
         SettingPanel = GameObject.Find("SettingPanel");
         if (SettingPanel != null)
+        {
             SettingPanel.SetActive(isSettingPanelActive);
+            settingStartPos = SettingPanel.transform.localPosition;
+        }
 
         if (levelList == null || levelList.levels.Count == 0)
         {
@@ -136,14 +140,18 @@ public class LevelSelectorManager : MonoBehaviour
     public void ToggleSettingsPanel()
     {
         isSettingPanelActive = !isSettingPanelActive;
+
+        iTween.Stop(SettingPanel);
+
         if (isSettingPanelActive)
         {
             SettingPanel.SetActive(true);
-            iTween.MoveFrom(SettingPanel, iTween.Hash("y", 1000, "time", 2f, "easeType", "easeOutExpo"));
+            SettingPanel.transform.localPosition = new Vector3(settingStartPos.x, 1000, settingStartPos.z);
+            iTween.MoveTo(SettingPanel, iTween.Hash("position", settingStartPos, "islocal", true, "time", 0.8f, "easeType", iTween.EaseType.easeOutExpo, "ignoretimescale", true));
         }
         else
         {
-            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "time", 1f, "easeType", "easeInExpo", "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
+            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "islocal", true, "time", 0.6f, "easeType", iTween.EaseType.easeInExpo, "ignoretimescale", true, "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
         }
     }
 
