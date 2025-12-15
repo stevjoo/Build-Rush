@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public string targetLevelFile = "target_level";
     public float previewTime = 5f; // detik target muncul sebelum hilang
     public float buildTime = 360f; // waktu maksimal build
+    public int passingScore = 70; // skor minimal untuk menang
 
 
     [Header("UI")]
@@ -71,6 +72,8 @@ public class GameManager : MonoBehaviour
         SettingPanel = GameObject.Find("SettingPanel");
         if (SettingPanel != null)
             SettingPanel.SetActive(isSettingPanelActive);
+
+        LockCursor();
     }
 
     void UpdateLevelData(int levelID)
@@ -80,6 +83,7 @@ public class GameManager : MonoBehaviour
         {
             targetLevelFile = currentLevelData.levelJson;
             buildTime = currentLevelData.timer;
+            passingScore = currentLevelData.passingScore;
         }
         else
         {
@@ -100,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartPreGamePhase()
     {
-
+        yield return ShowMessageAndWait("Memory Time\nRemember the Building!", true);
         // Lock player Movement
         inputLocked = true;
         if (movementController != null)
@@ -202,13 +206,13 @@ public class GameManager : MonoBehaviour
         // -- times up message --
         yield return ShowMessageAndWait("Build Time's Up!", true);
         // Tampilkan skor akhir
-        string finalmsg = (score >= 70) ? "You Win!" : "Try Again!";
+        string finalmsg = (score >= passingScore) ? "You Win!" : "Try Again!";
         yield return ShowMessageAndWait(finalmsg+"\nFinal Accuracy: " + score + "%", false);
 
 
         Debug.Log("Build time over! Final Accuracy: " + score + "%");
 
-        if (score >= 70)
+        if (score >= passingScore)
         {
             currentLevelData.isCompleted = true;
         }
@@ -218,8 +222,15 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ShowMessageAndWait(string message, bool showClickMsg=true)
     { 
+        yield return null; // wait one frame to avoid UI glitches
+
         inputLocked = true;
-        movementController.movementLocked = true;
+        if (movementController != null)
+            movementController.movementLocked = true;
+
+        Time.timeScale = 0f;
+        UnlockCursor();
+
         messagePanel.SetActive(true);
         //iTween.ScaleFrom(messagePanel, iTween.Hash("x", 0, "y", 0, "time", 1f, "delay", 0f, "easeType", "easeOutQuart"));
         messageText.text = message;
@@ -235,8 +246,15 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         messagePanel.SetActive(false);
+
+        Time.timeScale = 1f;
+        LockCursor();
+
         inputLocked = false;
-        movementController.movementLocked = false;
+        if (movementController != null)
+            movementController.movementLocked = false;
+
+        
 
     }
 
@@ -250,6 +268,8 @@ public class GameManager : MonoBehaviour
         if(movementController != null)
             movementController.movementLocked = true;
         ghostCameraController.movementLocked = true;
+
+        UnlockCursor();
     }
 
     public void ResumeGame()
@@ -263,16 +283,8 @@ public class GameManager : MonoBehaviour
             movementController.movementLocked = false;
         ghostCameraController.movementLocked = false;
 
-    }
+        LockCursor();
 
-    void ResumeGameSetting()
-    {
-        pausePanel.SetActive(false);
-        Time.timeScale = 1f;
-        inputLocked = false;
-        if (movementController != null)
-            movementController.movementLocked = false;
-        ghostCameraController.movementLocked = false;
     }
 
     public void ToggleSettingsPanel()
@@ -290,8 +302,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void DeactivateSettingPanel()
+    private void LockCursor()
     {
-        SettingPanel.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    private void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

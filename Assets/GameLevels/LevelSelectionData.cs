@@ -12,5 +12,5 @@ public class LevelSelectionData : ScriptableObject
     public bool isLocked = true;
     public bool isCompleted = false;
     public int timer;
-    public int matchCount;
+    public int passingScore;
 }
