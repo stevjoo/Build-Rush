@@ -50,8 +50,6 @@ public class GameManager : MonoBehaviour
 
     private int score = 0;
 
-
-
     void Start()
     {
         // Reset time scale
