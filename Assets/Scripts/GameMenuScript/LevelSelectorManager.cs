@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LevelSelectorManager : MonoBehaviour
 {
@@ -65,14 +66,16 @@ public class LevelSelectorManager : MonoBehaviour
 
         if(completeImage != null)
         {
-            completeImage.SetActive(level.isCompleted);
+            StopAllCoroutines();
 
-            if (level.isCompleted)
+            if (!level.isCompleted)
             {
                 iTween.Stop(completeImage);
-                completeImage.transform.localScale = Vector3.one;
-
-                iTween.ScaleFrom(completeImage, iTween.Hash("scale", Vector3.zero, "time", 1f, "delay", 0f, "easeType", iTween.EaseType.easeOutBack));
+                completeImage.SetActive(false);
+            }
+            else
+            {
+                StartCoroutine(AnimateCompletionImage(completeImage));
             }
             
         }
@@ -83,8 +86,8 @@ public class LevelSelectorManager : MonoBehaviour
         selectButton.interactable = !level.isLocked;
 
         levelNameText.text = $"Level {level.levelID} : {level.levelName}";
-        levelMatchText.text = $"Match\t: {level.passingScore}%";
-        levelTimeText.text = $"Time\t: {level.timer / 60}:{(level.timer % 60).ToString("D2")}";
+        levelMatchText.text = $"Requirement\t: {level.passingScore}%";
+        levelTimeText.text = $"Time\t\t: {level.timer / 60}:{(level.timer % 60).ToString("D2")}";
         levelThumbnailImage.sprite = level.levelThumbnail;
 
         previousButton.interactable = (currentLevelIndex > 0);
@@ -160,5 +163,15 @@ public class LevelSelectorManager : MonoBehaviour
         SettingPanel.SetActive(false);
     }
 
+    IEnumerator AnimateCompletionImage(GameObject imageToAnimate)
+    {
+        iTween.Stop(imageToAnimate);
+        imageToAnimate.SetActive(true);
 
+        imageToAnimate.transform.localScale = Vector3.zero;
+
+        yield return null;
+
+        iTween.ScaleTo(imageToAnimate, iTween.Hash("scale", Vector3.one, "time", 1f, "delay", 0f, "easeType", iTween.EaseType.easeOutBack));
+    }
 }

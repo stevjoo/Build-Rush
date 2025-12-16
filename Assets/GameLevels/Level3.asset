@@ -19,4 +19,4 @@ MonoBehaviour:
   isLocked: 1
   isCompleted: 0
   timer: 180
-  matchCount: 70
+  passingScore: 70
