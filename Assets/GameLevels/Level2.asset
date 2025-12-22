@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level2
   m_EditorClassIdentifier: Assembly-CSharp::LevelSelectionData
   levelID: 2
-  levelName: Beginner House
+  levelName: The House
   levelJson: Level2
   levelThumbnail: {fileID: 21300000, guid: 25a74c4365005ce4f92d5bb00abddbb1, type: 3}
   isLocked: 1

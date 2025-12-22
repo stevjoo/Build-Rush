@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: Assembly-CSharp::LevelSelectionData
   levelID: 1
-  levelName: Tree
+  levelName: The Tree
   levelJson: Level1
   levelThumbnail: {fileID: 21300000, guid: 5daa2eac6044db34b809419719996960, type: 3}
   isLocked: 0
