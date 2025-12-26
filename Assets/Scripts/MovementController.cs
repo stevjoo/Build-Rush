@@ -95,7 +95,11 @@ public class MovementController : MonoBehaviour
             stepTimer -= Time.deltaTime;
             if (stepTimer <= 0f)
             {
-                AudioManager.Instance.PlayWalkSFX();
+                if (AudioManager.Instance != null)
+                {
+                    // 3D footstep dari posisi karakter
+                    AudioManager.Instance.PlayWalkSFX3D(transform.position);
+                }
                 stepTimer = stepCooldown; // reset jeda langkah
             }
         }

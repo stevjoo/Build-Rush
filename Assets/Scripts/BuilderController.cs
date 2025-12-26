@@ -142,9 +142,11 @@ public class BuilderController : MonoBehaviour
                 lastPlacedPos = blockPos;
                 moveSinceDirChange = 0f;
 
-                // 🔊 mainkan suara saat build
                 if (AudioManager.Instance != null)
-                    AudioManager.Instance.PlayPlaceSFX();
+                {
+                    // 3D SFX dari posisi blok
+                    AudioManager.Instance.PlayPlaceSFX3D((Vector3)blockPos);
+                }
             }
         }
     }
@@ -190,9 +192,10 @@ public class BuilderController : MonoBehaviour
         {
             lastPlacedPos = pos;
 
-            // 🔊 suara place atas
             if (AudioManager.Instance != null)
-                AudioManager.Instance.PlayPlaceSFX();
+            {
+                AudioManager.Instance.PlayPlaceSFX3D((Vector3)pos);
+            }
         }
     }
 
@@ -212,9 +215,10 @@ public class BuilderController : MonoBehaviour
         {
             lastPlacedPos = pos;
 
-            // 🔊 suara place bawah
             if (AudioManager.Instance != null)
-                AudioManager.Instance.PlayPlaceSFX();
+            {
+                AudioManager.Instance.PlayPlaceSFX3D((Vector3)pos);
+            }
         }
     }
 
@@ -224,16 +228,18 @@ public class BuilderController : MonoBehaviour
         if (Physics.Raycast(origin, new Vector3(dir.x, 0, dir.z), out RaycastHit hit, frontBreakDistance))
         {
             Vector3Int pos = Vector3Int.RoundToInt(hit.collider.transform.position);
-            if (breakCooldownTimer <= 0f && pos != lastBrokenPos && gridManager.HasBlock(pos))
-            {
-                gridManager.RemoveBlock(pos);
-                lastBrokenPos = pos;
-                breakCooldownTimer = 0.2f;
+        if (breakCooldownTimer <= 0f && pos != lastBrokenPos && gridManager.HasBlock(pos))
+        {
+            gridManager.RemoveBlock(pos);
+            lastBrokenPos = pos;
+            breakCooldownTimer = 0.2f;
 
-                // 🔊 suara delete
-                if (AudioManager.Instance != null)
-                    AudioManager.Instance.PlayDeleteSFX();
+            if (AudioManager.Instance != null)
+            {
+                // pakai titik raycast kena block untuk posisi SFX
+                AudioManager.Instance.PlayDeleteSFX3D(hit.point);
             }
+        }
         }
     }
 
@@ -251,9 +257,10 @@ public class BuilderController : MonoBehaviour
             gridManager.RemoveBlock(pos);
             breakCooldownTimer = breakCooldown;
 
-            // 🔊 suara delete bawah
             if (AudioManager.Instance != null)
-                AudioManager.Instance.PlayDeleteSFX();
+            {
+                AudioManager.Instance.PlayDeleteSFX3D((Vector3)pos);
+            }
         }
     }
 

@@ -519,6 +519,7 @@ GameObject:
   - component: {fileID: 547190343}
   - component: {fileID: 547190342}
   - component: {fileID: 547190341}
+  - component: {fileID: 547190345}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -616,6 +617,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &547190345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547190340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 505f1c4452d1eb243a2ff8abee8ba89d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HowToPlayManager
+  backgroundDisplay: {fileID: 1462806880}
+  pageBackgrounds:
+  - {fileID: 21300000, guid: 70b6a55a20d45fa47ba9ccd7c2fa4440, type: 3}
+  - {fileID: 21300000, guid: eb33e691502de374ab4d31f6194fa5ce, type: 3}
+  - {fileID: 21300000, guid: ca7fc1b9dc8eb3449bea30d9154b04ee, type: 3}
+  - {fileID: 21300000, guid: 548505bf5eee141418baf7bb676f04ae, type: 3}
+  previousButton: {fileID: 483705816}
+  nextButton: {fileID: 844165030}
 --- !u!1 &844165028
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,7 +767,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1163114296}
   - component: {fileID: 1163114298}
-  - component: {fileID: 1163114297}
   m_Layer: 5
   m_Name: MenuManager
   m_TagString: Untagged
@@ -773,26 +793,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1163114297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1163114295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 505f1c4452d1eb243a2ff8abee8ba89d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HowToPlayManager
-  backgroundDisplay: {fileID: 1462806880}
-  pageBackgrounds:
-  - {fileID: 21300000, guid: 70b6a55a20d45fa47ba9ccd7c2fa4440, type: 3}
-  - {fileID: 21300000, guid: eb33e691502de374ab4d31f6194fa5ce, type: 3}
-  - {fileID: 21300000, guid: ca7fc1b9dc8eb3449bea30d9154b04ee, type: 3}
-  - {fileID: 21300000, guid: 548505bf5eee141418baf7bb676f04ae, type: 3}
-  previousButton: {fileID: 483705816}
-  nextButton: {fileID: 844165030}
 --- !u!114 &1163114298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1140,7 +1140,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000026703, y: 0.000022888}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 35.3313, y: 36.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1412331516
@@ -1402,7 +1402,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1163114297}
+      - m_Target: {fileID: 547190345}
         m_TargetAssemblyTypeName: HowToPlayManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
@@ -1503,10 +1503,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff39dae7d9658c439958a68dd70418b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  bgmButton: {fileID: 1527595109}
-  bgmOnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmOffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmSource: {fileID: 1762281361}
+  Button: {fileID: 1527595109}
+  OnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  OffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  PrefName: BGM_ON
 --- !u!114 &1527595109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1883,7 +1883,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1163114297}
+      - m_Target: {fileID: 547190345}
         m_TargetAssemblyTypeName: HowToPlayManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
@@ -1943,6 +1943,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1762281362}
   - component: {fileID: 1762281361}
+  - component: {fileID: 1762281363}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -1963,7 +1964,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 9d9c22a042a206f42999ef92eb996c4e, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.015
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2062,6 +2063,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1762281363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762281360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28264f59f038d44ab2e4e16f9cb913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleAudio
+  isBGM: 1
+  isSFX: 0
+  bgmKey: BGM_ON
+  sfxKey: SFX_ON
 --- !u!1 &2018677941
 GameObject:
   m_ObjectHideFlags: 0

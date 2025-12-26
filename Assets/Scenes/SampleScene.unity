@@ -651,6 +651,7 @@ GameObject:
   m_Component:
   - component: {fileID: 290509081}
   - component: {fileID: 290509080}
+  - component: {fileID: 290509082}
   m_Layer: 0
   m_Name: BGM Source
   m_TagString: Untagged
@@ -671,7 +672,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.015
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -770,6 +771,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &290509082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290509079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28264f59f038d44ab2e4e16f9cb913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleAudio
+  isBGM: 1
+  isSFX: 0
+  bgmKey: BGM_ON
+  sfxKey: SFX_ON
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,7 +1244,7 @@ GameObject:
   - component: {fileID: 336259690}
   - component: {fileID: 336259689}
   - component: {fileID: 336259688}
-  - component: {fileID: 336259687}
+  - component: {fileID: 336259691}
   m_Layer: 5
   m_Name: button
   m_TagString: Untagged
@@ -1254,22 +1271,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &336259687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 336259685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bff39dae7d9658c439958a68dd70418b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  bgmButton: {fileID: 336259688}
-  bgmOnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmOffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmSource: {fileID: 290509080}
 --- !u!114 &336259688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1352,6 +1353,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 336259685}
   m_CullTransparentMesh: 1
+--- !u!114 &336259691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336259685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff39dae7d9658c439958a68dd70418b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundToggleButton
+  Button: {fileID: 336259688}
+  OnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  OffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  PrefName: BGM_ON
 --- !u!1 &336939915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,8 +1451,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 688545548}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 688545547}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
@@ -2058,8 +2075,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 688545548}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 688545547}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
@@ -2808,7 +2825,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000000012573, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50.1631, y: 43.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &641900564
@@ -2899,6 +2916,8 @@ MonoBehaviour:
   playerCamera: {fileID: 330585545}
   ghostCamera: {fileID: 554866045}
   playerObject: {fileID: 586117426}
+  levelListContainer: {fileID: 11400000, guid: a975671ecb70a224191895daa75479fe, type: 2}
+  selectedLevelID: 1
   targetLevelFile: Level1
   previewTime: 30
   buildTime: 180
@@ -2972,10 +2991,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff39dae7d9658c439958a68dd70418b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
-  bgmButton: {fileID: 759604196}
-  bgmOnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmOffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
-  bgmSource: {fileID: 1455900438}
+  Button: {fileID: 759604196}
+  OnSprite: {fileID: -792093821, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  OffSprite: {fileID: 321879739, guid: 2141b6d78ea40234896a416723616ae8, type: 3}
+  PrefName: SFX_ON
 --- !u!114 &759604196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4462,7 +4481,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0048828, y: 0}
+  m_AnchoredPosition: {x: -0.0048828125, y: 0}
   m_SizeDelta: {x: 33.439, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1098334827
@@ -5426,6 +5445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1455900439}
   - component: {fileID: 1455900438}
+  - component: {fileID: 1455900440}
   m_Layer: 0
   m_Name: SFX Source
   m_TagString: Untagged
@@ -5453,7 +5473,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
@@ -5490,7 +5510,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -5505,7 +5525,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.375
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -5545,6 +5565,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1455900440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455900437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e28264f59f038d44ab2e4e16f9cb913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToggleAudio
+  isBGM: 0
+  isSFX: 1
+  bgmKey: BGM_ON
+  sfxKey: SFX_ON
 --- !u!1 &1485437655
 GameObject:
   m_ObjectHideFlags: 0
@@ -5794,7 +5830,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000026464, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 57.759, y: 50.1995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1548844154

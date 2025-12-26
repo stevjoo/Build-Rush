@@ -19,9 +19,12 @@ public class GameManager : MonoBehaviour
     public GameObject playerObject;
 
     [Header("Settings")]
+    public LevelListContainer levelListContainer;
+    public int selectedLevelID = 1;
     public string targetLevelFile = "target_level";
     public float previewTime = 5f; // detik target muncul sebelum hilang
     public float buildTime = 360f; // waktu maksimal build
+    public int passingScore = 70; // skor minimal untuk menang
 
 
     [Header("UI")]
@@ -31,6 +34,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI continueText;
     public GameObject pausePanel;
     public Button pauseButton;
+
+    private GameObject SettingPanel;
+    private bool isSettingPanelActive = false;
 
     [Header("Level Settings")]
     public LevelSelectionData currentLevelData;
@@ -44,15 +50,52 @@ public class GameManager : MonoBehaviour
 
     private int score = 0;
 
-
+    private Vector3 settingStartPos;
+    private Vector3 pauseStartPos;
 
     void Start()
     {
+        // Reset time scale
+        Time.timeScale = 1f;
+
+        selectedLevelID = PlayerPrefs.GetInt("SelectedLevelID", 1);
+        UpdateLevelData(selectedLevelID);
+
         movementController = FindObjectOfType<MovementController>();
         ghostCameraController = ghostCamera.GetComponent<GhostCameraController>();
         StartCoroutine(StartPreGamePhase());
         messagePanel.SetActive(false);
-        pausePanel.SetActive(false);
+
+        if (pausePanel != null)
+        {
+            pausePanel.SetActive(false);
+            pauseStartPos = pausePanel.transform.localPosition;
+        }
+
+        isSettingPanelActive = false;
+        SettingPanel = GameObject.Find("SettingPanel");
+        if (SettingPanel != null)
+        {
+            SettingPanel.SetActive(isSettingPanelActive);
+            settingStartPos = SettingPanel.transform.localPosition;
+        }
+
+      
+    }
+
+    void UpdateLevelData(int levelID)
+    {
+        currentLevelData = levelListContainer.GetLevelByID(levelID);
+        if (currentLevelData != null)
+        {
+            targetLevelFile = currentLevelData.levelJson;
+            buildTime = currentLevelData.timer;
+            passingScore = currentLevelData.passingScore;
+        }
+        else
+        {
+            Debug.LogError($"Level with ID {levelID} not found.");
+        }
     }
 
     private void Update()
@@ -68,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartPreGamePhase()
     {
-
+        yield return ShowMessageAndWait("Memory Time\nRemember the Building!", true);
         // Lock player Movement
         inputLocked = true;
         if (movementController != null)
@@ -170,13 +213,13 @@ public class GameManager : MonoBehaviour
         // -- times up message --
         yield return ShowMessageAndWait("Build Time's Up!", true);
         // Tampilkan skor akhir
-        string finalmsg = (score >= 70) ? "You Win!" : "Try Again!";
+        string finalmsg = (score >= passingScore) ? "You Win!" : "Try Again!";
         yield return ShowMessageAndWait(finalmsg+"\nFinal Accuracy: " + score + "%", false);
 
 
         Debug.Log("Build time over! Final Accuracy: " + score + "%");
 
-        if (score >= 70)
+        if (score >= passingScore)
         {
             currentLevelData.isCompleted = true;
         }
@@ -186,9 +229,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ShowMessageAndWait(string message, bool showClickMsg=true)
     { 
+        yield return null; // wait one frame to avoid UI glitches
+
         inputLocked = true;
-        movementController.movementLocked = true;
+        if (movementController != null)
+            movementController.movementLocked = true;
+
+        Time.timeScale = 0f;
+
         messagePanel.SetActive(true);
+        //iTween.ScaleFrom(messagePanel, iTween.Hash("x", 0, "y", 0, "time", 1f, "delay", 0f, "easeType", "easeOutQuart"));
         messageText.text = message;
         continueText.gameObject.SetActive(showClickMsg);
         // Tunggu klik/tap user
@@ -202,29 +252,85 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         messagePanel.SetActive(false);
+
+        Time.timeScale = 1f;
+
+
         inputLocked = false;
-        movementController.movementLocked = false;
+        if (movementController != null)
+            movementController.movementLocked = false;
+
+        
+
     }
 
     public void PauseGame()
     {
+        if (isPaused) return;
+
         isPaused = true;
+
         pausePanel.SetActive(true);
+
+        pausePanel.transform.localPosition = new Vector3(pauseStartPos.x, 1000, pauseStartPos.z);
+
+        iTween.MoveTo(pausePanel, iTween.Hash("position", pauseStartPos, "islocal", true,  "time", 0.6f, "easeType", iTween.EaseType.easeOutExpo, "ignoretimescale", true));
         Time.timeScale = 0f;
+
         inputLocked = true;
         if(movementController != null)
             movementController.movementLocked = true;
-        ghostCameraController.movementLocked = true;
+
+        if(ghostCameraController != null)
+            ghostCameraController.movementLocked = true;
+
+       
     }
 
     public void ResumeGame()
     {
+        if (!isPaused) return;
+
         isPaused = false;
+
+        iTween.MoveTo(pausePanel, iTween.Hash("y", 1000, "islocal", true, "time", 0.6f, "easeType", iTween.EaseType.easeInExpo, "ignoretimescale", true, "oncomplete", "DeactivatePausePanel", "oncompletetarget", gameObject));
+        
+    }
+
+    void DeactivatePausePanel()
+    {
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
         inputLocked = false;
-        if(movementController != null)
+        if (movementController != null)
             movementController.movementLocked = false;
-        ghostCameraController.movementLocked = false;
+        if (ghostCameraController != null)
+            ghostCameraController.movementLocked = false;
+
+        
     }
+
+    public void ToggleSettingsPanel()
+    {
+        isSettingPanelActive = !isSettingPanelActive;
+
+        iTween.Stop(SettingPanel);
+
+        if (isSettingPanelActive)
+        {
+            SettingPanel.SetActive(true);
+            SettingPanel.transform.localPosition = new Vector3(settingStartPos.x, 1000, settingStartPos.z);
+            iTween.MoveTo(SettingPanel, iTween.Hash("position", settingStartPos, "islocal", true, "time", 0.8f, "easeType", iTween.EaseType.easeOutExpo, "ignoretimescale", true));
+        }
+        else
+        {
+            iTween.MoveTo(SettingPanel, iTween.Hash("y", 1000, "islocal", true, "time", 0.6f, "easeType", iTween.EaseType.easeInExpo, "ignoretimescale", true, "oncomplete", "DeactivateSettingPanel", "oncompletetarget", this.gameObject));
+        }
+    }
+
+    void DeactivateSettingPanel()
+    {
+        SettingPanel.SetActive(false);
+    }
+
 }
